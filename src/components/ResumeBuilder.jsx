@@ -8,7 +8,7 @@ import { useReactToPrint } from "react-to-print";
 const steps = [
   {
     id: 1,
-    title: "Name",
+    title: "Personal",
   },
   {
     id: 2,
@@ -21,16 +21,42 @@ const steps = [
 ];
 
 const ResumeBuilder = () => {
-  const resumeRef = useRef(null);
+  const handleSocialsChange = (index, value) => {
+    console.log(index, value);
 
-  const reactToPrintFn = useReactToPrint({
-    contentRef: resumeRef,
-  });
+    const updated = [...formData.socials];
+    updated[index] = value;
+    console.log(updated);
+    setFormData((prev) => ({
+      ...prev,
+      socials: updated,
+    }));
+  };
+
+  const handleSocialsAdd = () => {
+    setFormData((prev) => ({
+      ...prev,
+      socials: [...formData.socials, ""],
+    }));
+  };
+
+  const handleSocialsRemove = (index) => {
+    if (formData.socials.length == 1) return;
+    const updated = formData.socials.filter((_, i) => i !== index);
+    setFormData((prev) => ({
+      ...prev,
+      socials: updated,
+    }));
+  };
 
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     name: "",
+    phone: "",
+    email: "",
     address: "",
+    about: "",
+    socials: [""],
   });
 
   const handleOnChange = (event) => {
@@ -65,6 +91,12 @@ const ResumeBuilder = () => {
         return false;
     }
   };
+
+  const resumeRef = useRef(null);
+
+  const reactToPrintFn = useReactToPrint({
+    contentRef: resumeRef,
+  });
 
   return (
     <>
@@ -103,49 +135,106 @@ const ResumeBuilder = () => {
       </div>
 
       <div className="flex lg:flex-row max-lg:flex-col lg:items-start items-center justify-center lg:gap-x-8 lg:px-14 lg:pt-14 max-lg:pt-8 max-lg:px-8 max-lg:gap-y-6">
-        <div className="flex flex-col bg-gray-50 md:max-w-[594px] w-full">
+        {/* <div className="flex flex-col bg-gray-50 md:max-w-[594px] w-full">
           <div>
             {currentStep === 1 && (
               <div className="flex flex-col gap-3">
-                <Label htmlFor="name">Full Name</Label>
+                <div className="flex md:flex-row max-md:flex-col gap-3">
+                  <div className="flex flex-col gap-3 flex-1">
+                    <Label htmlFor="name">Full Name</Label>
+                    <Input
+                      id="name"
+                      name="name"
+                      type="text"
+                      value={formData.name}
+                      onChange={handleOnChange}
+                      placeholder="Enter Your Name"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-3 flex-1">
+                    <Label htmlFor="name">Email</Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleOnChange}
+                      placeholder="Enter Your Email"
+                    />
+                  </div>
+                </div>
+
+                <Label htmlFor="phone">Phone Number</Label>
                 <Input
-                  id="name"
-                  name="name"
-                  type="text"
-                  value={formData.name}
+                  id="phone"
+                  name="phone"
+                  type="number"
+                  value={formData.phone}
                   onChange={handleOnChange}
-                  placeholder="Enter Your Name"
+                  placeholder="Enter Contact Number"
                 />
 
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="Address">Address</Label>
                 <Input
-                  id="name"
-                  name="name"
+                  id="address"
+                  name="address"
                   type="text"
-                  value={formData.name}
+                  value={formData.address}
                   onChange={handleOnChange}
-                  placeholder="Enter Your Name"
+                  placeholder="Enter Your Address"
                 />
 
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="Address">About Me</Label>
                 <Input
-                  id="name"
-                  name="name"
+                  id="about"
+                  name="about"
                   type="text"
-                  value={formData.name}
+                  value={formData.about}
                   onChange={handleOnChange}
-                  placeholder="Enter Your Name"
+                  placeholder="Enter Something"
                 />
 
-                <Label htmlFor="name">Full Name</Label>
-                <Input
-                  id="name"
-                  name="name"
-                  type="text"
-                  value={formData.name}
-                  onChange={handleOnChange}
-                  placeholder="Enter Your Name"
-                />
+                <Label htmlFor="socials">Social Links</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 md:gap-y-3 md: gap-x-8 gap-3">
+                  {formData.socials.map((link, index) => (
+                    <div key={index} className="flex items-center">
+                      <Input
+                        id={`social${index}`}
+                        name="socials"
+                        type="url"
+                        placeholder="Enter the link"
+                        value={formData.socials[index]}
+                        onChange={(e) =>
+                          handleSocialsChange(index, e.target.value)
+                        }
+                      />
+                      <div
+                        className={`pl-4 ${
+                          formData.socials.length == 1 ? "hidden" : "block"
+                        }`}
+                      >
+                        <Button
+                          className={"text-black"}
+                          type="button"
+                          variant="destructive"
+                          size="icon"
+                          onClick={() => handleSocialsRemove(index)}
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleSocialsAdd}
+                >
+                  + Add Social
+                </Button>
               </div>
             )}
 
@@ -182,7 +271,7 @@ const ResumeBuilder = () => {
               {currentStep === 3 ? "Submit" : "Next"}
             </Button>
           </div>
-        </div>
+        </div> */}
 
         <div className="flex justify-center items-start max-md:hidden">
           <div
