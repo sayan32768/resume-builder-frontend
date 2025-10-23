@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import React from "react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Navbar = () => {

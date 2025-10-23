@@ -1,16 +1,14 @@
 import "./App.css";
-import PersonalForm from "./components/forms/PersonalForm";
-import Home from "./components/Home";
-import Navbar from "./components/Navbar";
-import ResumeBuilder from "./components/ResumeBuilder";
+import Navbar from "./components/common/Navbar";
+import Home from "./pages/Home";
+import ResumeForm from "./pages/ResumeForm";
 
 function App() {
   return (
     <>
       {/* <Navbar />
       <Home /> */}
-      {/* <ResumeBuilder /> */}
-      <PersonalForm />
+      <ResumeForm />
     </>
   );
 }
