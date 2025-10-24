@@ -138,7 +138,7 @@ const ResumeForm = () => {
             </Button>
           </div>
 
-          <div className="flex justify-center items-start max-md:hidden">
+          <div className="flex justify-center items-start ">
             <div
               className="relative"
               style={{

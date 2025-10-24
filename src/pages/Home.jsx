@@ -1,5 +1,5 @@
 import React from "react";
-import resumeImg from "../assets/resume.png";
+import resumeImg from "../assets/resume1.png";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { FileText, MoreVertical } from "lucide-react";
