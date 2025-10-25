@@ -1,7 +1,8 @@
 import { z } from "zod";
 
 export const userSchema = z.object({
-    // username: z.string().min(1, "Username is required").default("a"),
+    fullName: z.string().min(1, "Full name is required").default(""),
+    username: z.string().min(1, "Username is required").trim().default(""),
     email: z.email("Invalid email address").default(""),
     password: z.string().min(8, "Password must be at least 8 characters long").default(""),
     isVerified: z.boolean().optional().default(false),

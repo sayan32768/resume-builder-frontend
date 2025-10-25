@@ -14,25 +14,70 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signupSchema } from "@/schemas/signup.schema";
+import { useState } from "react";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import axios from "axios";
+import { toast } from "sonner";
 
 export function SignupForm({ className, ...props }) {
+  const navigate = useNavigate();
+
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
+    useState(false);
+
+  const changeVisibilityPassword = (e) => {
+    e.preventDefault();
+    setIsPasswordVisible(!isPasswordVisible);
+  };
+
+  const changeVisibilityConfirmPassword = (e) => {
+    e.preventDefault();
+    setIsConfirmPasswordVisible(!isConfirmPasswordVisible);
+  };
+
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(signupSchema),
     defaultValues: signupSchema.parse({}),
     mode: "onChange",
   });
 
-  const onSubmit = (data) => {
-    console.log("Signup Data", data);
+  // API CALLING HERE
+  const onSubmit = async (data) => {
+    console.log("Final Resume Data", data);
+    try {
+      // await login({ email, password });
+      const res = await axios.post(
+        "http://127.0.0.1:8000/user/register",
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (res.data.success) {
+        toast.success(res.data.message);
+        navigate("/login", { replace: true });
+      }
+
+      console.log(res.data);
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          "Something went wrong, please try again."
+      );
+    }
   };
 
   return (
@@ -93,11 +138,19 @@ export function SignupForm({ className, ...props }) {
               </Field>
               <Field>
                 <FieldLabel htmlFor="password">Password</FieldLabel>
-                <Input
-                  {...register("password")}
-                  id="password"
-                  type="password"
-                />
+                <div className="relative">
+                  <Input
+                    {...register("password")}
+                    id="password"
+                    type={!isPasswordVisible ? "password" : "text"}
+                  />
+                  <Button
+                    onClick={(e) => changeVisibilityPassword(e)}
+                    className={"absolute right-0 top-0 h-full px-3 py-2"}
+                  >
+                    {isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}
+                  </Button>
+                </div>
                 {errors.password && (
                   <p className="text-red-900 text-sm">
                     {errors.password.message}
@@ -108,11 +161,25 @@ export function SignupForm({ className, ...props }) {
                 <FieldLabel htmlFor="confirmPassword">
                   Confirm Password
                 </FieldLabel>
-                <Input
-                  {...register("confirmPassword")}
-                  id="confirmPassword"
-                  type="password"
-                />
+
+                <div className="relative">
+                  <Input
+                    {...register("confirmPassword")}
+                    id="confirmPassword"
+                    type={!isConfirmPasswordVisible ? "password" : "text"}
+                  />
+
+                  {/* <Button
+                    onClick={(e) => changeVisibilityConfirmPassword(e)}
+                    className={"absolute right-0 top-0 h-full px-3 py-2"}
+                  >
+                    {isConfirmPasswordVisible ? (
+                      <FaRegEye />
+                    ) : (
+                      <FaRegEyeSlash />
+                    )}
+                  </Button> */}
+                </div>
                 {errors.confirmPassword && (
                   <p className="text-red-900 text-sm">
                     {errors.confirmPassword.message}
@@ -120,10 +187,16 @@ export function SignupForm({ className, ...props }) {
                 )}
               </Field>
               <Field>
-                <Button type="submit">Create Account</Button>
-                <Button variant="outline" type="button">
-                  Sign up with Google
+                <Button
+                  variant={"outline"}
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Working..." : "Create Account"}
                 </Button>
+                {/* <Button variant="outline" type="button">
+                  Sign up with Google
+                </Button> */}
                 <FieldDescription className="px-6 text-center">
                   Already have an account? <Link to="/login">Sign in</Link>
                 </FieldDescription>

@@ -14,26 +14,56 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { userSchema } from "@/schemas/user.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/schemas/login.schema";
+import { useState } from "react";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import axios from "axios";
+import { toast } from "sonner";
 
 export function LoginForm({ className, ...props }) {
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+
+  const changeVisibility = (e) => {
+    e.preventDefault();
+    setShowPassword(!showPassword);
+  };
+
   const {
     control,
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: loginSchema.parse({}),
     mode: "onChange",
   });
 
-  const onSubmit = (data) => {
+  // API CALLING HERE
+  const onSubmit = async (data) => {
     console.log("Final Resume Data", data);
+    try {
+      // await login({ email, password });
+      const res = await axios.post("http://127.0.0.1:8000/user/login", data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(res.data);
+      if (res.data.success) {
+        toast.success(res.data.message);
+        navigate("/", { replace: true });
+      }
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          "Something went wrong, please try again."
+      );
+    }
   };
 
   return (
@@ -64,18 +94,23 @@ export function LoginForm({ className, ...props }) {
               <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <a
-                    href="#"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </a>
                 </div>
-                <Input
-                  {...register("password")}
-                  id="password"
-                  type="password"
-                />
+
+                <div className="relative">
+                  <Input
+                    {...register("password")}
+                    id="password"
+                    type={!showPassword ? "password" : "text"}
+                  />
+
+                  <Button
+                    onClick={(e) => changeVisibility(e)}
+                    className={"absolute right-0 top-0 h-full px-3 py-2"}
+                  >
+                    {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
+                  </Button>
+                </div>
+
                 {errors.password && (
                   <p className="text-red-900 text-sm">
                     {errors.password.message}
@@ -84,10 +119,12 @@ export function LoginForm({ className, ...props }) {
               </Field>
 
               <Field>
-                <Button type="submit">Login</Button>
-                <Button variant="outline" type="button">
-                  Login with Google
+                <Button variant="outline" type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Working..." : "Login"}
                 </Button>
+                {/* <Button variant="outline" type="button">
+                  Login with Google
+                </Button> */}
                 <FieldDescription className="text-center">
                   Don&apos;t have an account? <Link to="/signup">Sign up</Link>
                 </FieldDescription>
