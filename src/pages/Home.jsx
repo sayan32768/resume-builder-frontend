@@ -3,8 +3,10 @@ import resumeImg from "../assets/resume1.png";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { FileText, MoreVertical } from "lucide-react";
+import { getData } from "@/contexts/UserContext";
 
 const Home = () => {
+  const { user } = getData();
   const docs = [
     { name: "Resume Draft", modified: "Oct 14, 2025" },
     { name: "Project Report", modified: "Oct 10, 2025" },
@@ -19,6 +21,10 @@ const Home = () => {
             className="flex flex-col w-full max-md:space-y-2 md:space-y-6 mt-4 lg:mt-8 items-center"
           >
             <div className="flex flex-col w-fit max-md:space-y-2 md:space-y-6">
+              <h1 className="max-md:text-lg md:text-xl lg:text-2xl font-semibold ml-3 text-left max-md:mt-3 md:mt-3">
+                Welcome to Resume, {user.username}
+              </h1>
+
               <h1 className="max-md:text-lg md:text-xl lg:text-2xl font-semibold ml-3 text-left max-md:mt-3 md:mt-3">
                 Choose a Resume Template
               </h1>

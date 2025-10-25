@@ -22,8 +22,10 @@ import { useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import axios from "axios";
 import { toast } from "sonner";
+import { getData } from "@/contexts/UserContext";
 
 export function LoginForm({ className, ...props }) {
+  const { user, setUser } = getData();
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
@@ -46,19 +48,27 @@ export function LoginForm({ className, ...props }) {
   // API CALLING HERE
   const onSubmit = async (data) => {
     console.log("Final Resume Data", data);
+    setUser(null);
     try {
       // await login({ email, password });
-      const res = await axios.post("http://127.0.0.1:8000/user/login", data, {
+      const res = await axios.post("/user/login", data, {
+        withCredentials: true,
         headers: {
           "Content-Type": "application/json",
         },
       });
+
+      // const res = await api.post("/user/login", { email, password });
       console.log(res.data);
       if (res.data.success) {
+        console.log("AAAAAAAAAAAAAAAAAAAA");
+        console.log(res.data.data);
+        setUser(res.data.data);
         toast.success(res.data.message);
-        navigate("/", { replace: true });
+        navigate("/home", { replace: true });
       }
     } catch (error) {
+      setUser(null);
       toast.error(
         error.response?.data?.message ||
           "Something went wrong, please try again."

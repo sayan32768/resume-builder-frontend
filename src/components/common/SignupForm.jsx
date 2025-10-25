@@ -23,8 +23,11 @@ import { useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import axios from "axios";
 import { toast } from "sonner";
+import { getData } from "@/contexts/UserContext";
 
 export function SignupForm({ className, ...props }) {
+  const { user, setUser } = getData();
+
   const navigate = useNavigate();
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -54,6 +57,7 @@ export function SignupForm({ className, ...props }) {
   // API CALLING HERE
   const onSubmit = async (data) => {
     console.log("Final Resume Data", data);
+    setUser(null);
     try {
       // await login({ email, password });
       const res = await axios.post(
