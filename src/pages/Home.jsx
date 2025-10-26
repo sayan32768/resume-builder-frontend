@@ -6,14 +6,19 @@ import { FileText, MoreVertical } from "lucide-react";
 import { getData } from "@/contexts/UserContext";
 import axios from "axios";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const Home = () => {
   const { user } = getData();
 
+  const navigate = useNavigate();
+
+  const [pastResumes, setPastResumes] = useState(null);
+
   const [dataLoading, setDataLoading] = useState(true);
 
-  const resumeData = {};
-
+  // Change here
   useEffect(() => {
     const getResumeData = async () => {
       setDataLoading(true);
@@ -31,7 +36,7 @@ const Home = () => {
           toast.error(res.data.message || "Couldn't fetch past resumes");
         } else {
           setDataLoading(false);
-          console.log(res.data.data);
+          setPastResumes(res.data.data);
         }
       } catch (error) {
         setDataLoading(false);
@@ -44,15 +49,31 @@ const Home = () => {
     getResumeData();
   }, []);
 
-  const docs = [
-    { name: "Resume Draft", modified: "Oct 14, 2025" },
-    { name: "Project Report", modified: "Oct 10, 2025" },
-    { name: "Marketing Plan", modified: "Oct 6, 2025" },
-  ];
+  const handleLogout = async () => {
+    try {
+      const res = await axios.post(
+        `/user/logout`,
+        {},
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-  return dataLoading ? (
-    <div>Loading</div>
-  ) : (
+      if (res.data.success) {
+        navigate("/", { replace: true });
+        toast.success("Logged out successfully");
+      } else {
+        toast.error("Could not log out");
+      }
+    } catch (error) {
+      toast.error("Could not log out");
+    }
+  };
+
+  return dataLoading ? null : (
     <>
       <div className="bg-gray-100">
         <div className="flex flex-col max-md:mx-8 md:mx-30 lg:mx-50">
@@ -65,12 +86,20 @@ const Home = () => {
                 Welcome to Resume, {user.username}
               </h1>
 
+              <Button onClick={handleLogout} variant={"outline"}>
+                Logout
+              </Button>
+
               <h1 className="max-md:text-lg md:text-xl lg:text-2xl font-semibold ml-3 text-left max-md:mt-3 md:mt-3">
                 Choose a Resume Template
               </h1>
 
               <div className="flex max-md:flex-col md:flex-row justify-start items-center">
-                <div className="relative group md:mx-2 max-md:my-2 w-[330px] aspect-[8.5/11] border-2 border-transparent hover:border-black overflow-hidden transition-all duration-300 p-[6px]">
+                <h1>Modern</h1>
+                <div
+                  onClick={() => navigate(`/create?type=Modern`)}
+                  className="relative group md:mx-2 max-md:my-2 w-[330px] aspect-[8.5/11] border-2 border-transparent hover:border-black overflow-hidden transition-all duration-300 p-[6px]"
+                >
                   <img
                     className="w-full h-full object-cover shadow-md"
                     src={resumeImg}
@@ -83,7 +112,11 @@ const Home = () => {
                   </div>
                 </div>
 
-                <div className="relative group md:mx-2 max-md:my-2 w-[330px] aspect-[8.5/11] border-2 border-transparent hover:border-black overflow-hidden transition-all duration-300 p-[6px]">
+                <h1>Classic</h1>
+                <div
+                  onClick={() => navigate(`/create?type=Classic`)}
+                  className="relative group md:mx-2 max-md:my-2 w-[330px] aspect-[8.5/11] border-2 border-transparent hover:border-black overflow-hidden transition-all duration-300 p-[6px]"
+                >
                   <img
                     className="w-full h-full object-cover shadow-md"
                     src={resumeImg}
@@ -143,8 +176,9 @@ const Home = () => {
                       Your Past Templates
                     </h2>
                     <div className="flex flex-col divide-y">
-                      {docs.map((doc, index) => (
+                      {pastResumes.map((doc, index) => (
                         <div
+                          onClick={() => navigate(`/edit/${doc._id}`)}
                           key={index}
                           className="flex items-center justify-between py-3 hover:bg-gray-50 rounded-md px-2 transition-colors border-0"
                         >
@@ -154,13 +188,21 @@ const Home = () => {
                               <FileText className="w-5 h-5 text-gray-600" />
                             </div>
                             <span className="font-medium text-gray-800">
-                              {doc.name}
+                              {doc.resumeType}
                             </span>
                           </div>
 
                           {/* Right: Modified Date + More icon */}
                           <div className="flex items-center space-x-3 text-gray-500">
-                            <span className="text-sm">{doc.modified}</span>
+                            <span className="text-sm">
+                              {new Date(doc.updatedAt).toLocaleString("en-IN", {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </span>
                             <MoreVertical className="w-5 h-5 cursor-pointer hover:text-gray-700" />
                           </div>
                         </div>

@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import PersonalForm from "../components/forms/PersonalForm";
 import EducationDetailsForm from "../components/forms/EducationDetailsForm";
@@ -24,12 +24,40 @@ import { toast } from "sonner";
 const ResumeForm = () => {
   const types = ["Classic", "Modern"];
 
+  const { resumeId } = useParams();
+
+  useEffect(() => {
+    if (!resumeId) return;
+
+    const fetchResume = async () => {
+      try {
+        const res = await axios.get(`/resume/${resumeId}`, {
+          withCredentials: true,
+        });
+        if (res.data.success) {
+          setType(res.data.data.resumeType);
+          const { resumeType, ...newData } = res.data.data;
+          methods.reset(newData);
+        } else {
+          toast.error("Failed to fetch resume");
+        }
+      } catch (err) {
+        toast.error("Failed to fetch resume");
+      }
+    };
+
+    fetchResume();
+  }, [resumeId]);
+
   const navigate = useNavigate();
 
   const resumeRef = useRef(null);
 
   const [searchParams] = useSearchParams();
-  const type = searchParams.get("type");
+
+  const [type, setType] = useState(searchParams.get("type"));
+
+  // var type = searchParams.get("type");
 
   const reactToPrintFn = useReactToPrint({
     contentRef: resumeRef,
@@ -69,17 +97,33 @@ const ResumeForm = () => {
     console.log("Final Resume Data", data);
 
     try {
-      const res = await axios.post("/resume/create", data, {
-        withCredentials: true,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (res.data.success) {
-        navigate("/home", { replace: true });
-        toast.success("Successfully created resume");
+      if (!resumeId) {
+        const res = await axios.post("/resume/create", data, {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (res.data.success) {
+          navigate("/home", { replace: true });
+          toast.success("Successfully created resume");
+        } else {
+          toast.error("Some error occurrred, try again");
+        }
       } else {
-        toast.error("Some error occurrred, try again");
+        console.log(data);
+        const res = await axios.put(`/resume/${resumeId}`, data, {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (res.data.success) {
+          navigate("/home", { replace: true });
+          toast.success("Successfully updated resume");
+        } else {
+          toast.error("Some error occurrred, try again");
+        }
       }
     } catch (error) {
       toast.error(
@@ -89,7 +133,7 @@ const ResumeForm = () => {
     }
   };
 
-  if (!types.includes(type)) return <div>Show some fancy error</div>;
+  if (!types.includes(type)) return null;
 
   return (
     <FormProvider {...methods}>

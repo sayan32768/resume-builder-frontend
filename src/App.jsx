@@ -33,6 +33,7 @@ function App() {
           }
         />
         <Route path="/create" element={<ResumeForm />} />
+        <Route path="/edit/:resumeId" element={<ResumeForm />} />
       </Routes>
     </>
   );

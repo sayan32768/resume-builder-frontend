@@ -17,4 +17,6 @@ export const resumeSchema = z.object({
     projects: z.array(projectSchema).optional().default([projectSchema.parse({})]),
     otherExperience: z.array(experienceSchema).optional().default([experienceSchema.parse({})]),
     certifications: z.array(certificationSchema).optional().default([certificationSchema.parse({})])
-});
+})
+    .strict()
+    .strip();

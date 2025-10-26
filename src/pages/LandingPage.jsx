@@ -5,8 +5,10 @@ import img1 from "../assets/resume1.png";
 import img2 from "../assets/resume2.png";
 import Slider from "@/components/common/Slider";
 import Footer from "@/components/common/Footer";
+import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
+  const navigate = useNavigate();
   return (
     <div className="lg:gap-y-18 md:gap-y-16 max-md:gap-y-10 flex flex-col">
       <div className="lg:px-24 md:px-12 max-md:px-6 flex flex-col lg:gap-y-18 md:gap-y-16 max-md:gap-y-10 pt-10">
@@ -44,7 +46,12 @@ const LandingPage = () => {
               skills needed. Just your achievements — beautifully formatted.
             </span>
 
-            <Button className="bg-gray-900 text-white p-6">Get Started</Button>
+            <Button
+              onClick={() => navigate("/home")}
+              className="bg-gray-900 text-white p-6"
+            >
+              Get Started
+            </Button>
           </div>
         </div>
 
