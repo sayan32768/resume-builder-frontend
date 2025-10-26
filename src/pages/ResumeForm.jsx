@@ -12,9 +12,24 @@ import OtherExperienceForm from "../components/forms/OtherExperienceForm";
 import CertificationForm from "../components/forms/CertificationForm";
 import { useReactToPrint } from "react-to-print";
 import ResumePreview from "../components/common/ResumePreview";
+import {
+  replace,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
+import axios from "axios";
+import { toast } from "sonner";
 
 const ResumeForm = () => {
+  const types = ["Classic", "Modern"];
+
+  const navigate = useNavigate();
+
   const resumeRef = useRef(null);
+
+  const [searchParams] = useSearchParams();
+  const type = searchParams.get("type");
 
   const reactToPrintFn = useReactToPrint({
     contentRef: resumeRef,
@@ -48,9 +63,33 @@ const ResumeForm = () => {
 
   const [step, setStep] = useState(1);
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+    // await new Promise((resolve) => setTimeout(resolve, 4000));
+    data = { ...data, resumeType: type };
     console.log("Final Resume Data", data);
+
+    try {
+      const res = await axios.post("/resume/create", data, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (res.data.success) {
+        navigate("/home", { replace: true });
+        toast.success("Successfully created resume");
+      } else {
+        toast.error("Some error occurrred, try again");
+      }
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          "Something went wrong, please try again."
+      );
+    }
   };
+
+  if (!types.includes(type)) return <div>Show some fancy error</div>;
 
   return (
     <FormProvider {...methods}>
@@ -123,10 +162,11 @@ const ResumeForm = () => {
                 </Button>
               ) : (
                 <Button
+                  disabled={methods.formState.isSubmitting}
                   className={"bg-gray-900 text-white flex-1"}
                   type="submit"
                 >
-                  Submit
+                  {methods.formState.isSubmitting ? "Submitting..." : "Submit"}
                 </Button>
               )}
             </div>

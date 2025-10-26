@@ -1,18 +1,58 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import resumeImg from "../assets/resume1.png";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { FileText, MoreVertical } from "lucide-react";
 import { getData } from "@/contexts/UserContext";
+import axios from "axios";
+import { toast } from "sonner";
 
 const Home = () => {
   const { user } = getData();
+
+  const [dataLoading, setDataLoading] = useState(true);
+
+  const resumeData = {};
+
+  useEffect(() => {
+    const getResumeData = async () => {
+      setDataLoading(true);
+      // await new Promise((resolve) => setTimeout(resolve, 3000));
+      try {
+        const res = await axios.get("/resume/all", {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!res.data.success) {
+          setDataLoading(false);
+          toast.error(res.data.message || "Couldn't fetch past resumes");
+        } else {
+          setDataLoading(false);
+          console.log(res.data.data);
+        }
+      } catch (error) {
+        setDataLoading(false);
+        toast.error("Couldn't get past resumes");
+      } finally {
+        setDataLoading(false);
+      }
+    };
+
+    getResumeData();
+  }, []);
+
   const docs = [
     { name: "Resume Draft", modified: "Oct 14, 2025" },
     { name: "Project Report", modified: "Oct 10, 2025" },
     { name: "Marketing Plan", modified: "Oct 6, 2025" },
   ];
-  return (
+
+  return dataLoading ? (
+    <div>Loading</div>
+  ) : (
     <>
       <div className="bg-gray-100">
         <div className="flex flex-col max-md:mx-8 md:mx-30 lg:mx-50">

@@ -7,6 +7,8 @@ import ResumeForm from "./pages/ResumeForm";
 import { Routes, Route } from "react-router-dom";
 import SignupPage from "./pages/SignupPage";
 import ProtectedRoute from "./components/common/ProtectedRoute";
+import VerifyEmail from "./pages/VerifyEmail";
+import Verify from "./pages/Verify";
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/" element={<LandingPage />} />
+        <Route path="/verify" element={<VerifyEmail />} />
+        <Route path="/verify/:token" element={<Verify />} />
         {/* <Route path="/about" element={<About />} /> */}
         <Route
           path="/home"
@@ -28,7 +32,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/resume-builder" element={<ResumeForm />} />
+        <Route path="/create" element={<ResumeForm />} />
       </Routes>
     </>
   );

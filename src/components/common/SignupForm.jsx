@@ -60,19 +60,15 @@ export function SignupForm({ className, ...props }) {
     setUser(null);
     try {
       // await login({ email, password });
-      const res = await axios.post(
-        "http://127.0.0.1:8000/user/register",
-        data,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const res = await axios.post("/user/register", data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       if (res.data.success) {
         toast.success(res.data.message);
-        navigate("/login", { replace: true });
+        navigate("/verify");
       }
 
       console.log(res.data);
