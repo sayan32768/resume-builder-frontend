@@ -4,6 +4,7 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { DatePicker } from "../common/DatePicker";
+import AddButtonDotted from "../common/AddButtonDotted";
 
 const OtherExperienceForm = () => {
   const {
@@ -20,15 +21,14 @@ const OtherExperienceForm = () => {
   return (
     <div className="flex flex-col bg-gray-50 w-full">
       {fields.map((obj, index) => (
-        <div
-          key={obj.id}
-          className="flex flex-col gap-3 bg-green-50 p-4 mb-4 rounded-xl"
-        >
-          <h1 className="text-xl">Experience Details {index + 1}</h1>
+        <div key={obj.id} className="flex flex-col gap-3 p-0 mb-4 rounded-xl">
+          <h1 className="text-xl">Other Experience Details {index + 1}</h1>
 
           <div className="flex md:flex-row max-md:flex-col gap-3">
             <div className="flex flex-col gap-3 flex-1">
-              <Label htmlFor="companyName">Organization Name</Label>
+              <Label htmlFor="companyName">
+                Organization Name <span className="text-red-900">*</span>
+              </Label>
 
               <div className="gap-y-1 flex flex-col">
                 <Input
@@ -129,9 +129,7 @@ const OtherExperienceForm = () => {
 
           <Button
             variant={"outline"}
-            className={`w-full mt-1 ${
-              fields.length === 1 ? "hidden" : "block"
-            }`}
+            className={`w-full mt-1`}
             onClick={() => remove(index)}
           >
             Remove Experience
@@ -139,9 +137,20 @@ const OtherExperienceForm = () => {
         </div>
       ))}
 
-      <Button variant={"outline"} className={"w-full"} onClick={() => append()}>
-        Add Work Experience
-      </Button>
+      {fields.length === 0 ? (
+        <AddButtonDotted
+          onClick={() => append()}
+          text="+ Add Other Experience"
+        />
+      ) : (
+        <Button
+          variant={"outline"}
+          className={"w-full"}
+          onClick={() => append()}
+        >
+          + Add Other Experience
+        </Button>
+      )}
 
       {errors?.otherExperience && (
         <p className="pb-2 text-red-900">{errors.otherExperience.message}</p>

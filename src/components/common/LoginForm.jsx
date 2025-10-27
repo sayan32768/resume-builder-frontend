@@ -78,7 +78,7 @@ export function LoginForm({ className, ...props }) {
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
+      <Card className={"bg-slate-100 border-slate-300"}>
         <CardHeader>
           <CardTitle>Login to your account</CardTitle>
           <CardDescription>
@@ -91,6 +91,7 @@ export function LoginForm({ className, ...props }) {
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
+                  className={"bg-slate-300 border-0 border-slate-700"}
                   {...register("email")}
                   id="email"
                   type="email"
@@ -108,6 +109,7 @@ export function LoginForm({ className, ...props }) {
 
                 <div className="relative">
                   <Input
+                    className={"bg-slate-300 border-0 border-slate-700"}
                     {...register("password")}
                     id="password"
                     type={!showPassword ? "password" : "text"}
@@ -129,7 +131,12 @@ export function LoginForm({ className, ...props }) {
               </Field>
 
               <Field>
-                <Button variant="outline" type="submit" disabled={isSubmitting}>
+                <Button
+                  className={"text-white bg-slate-900"}
+                  variant="outline"
+                  type="submit"
+                  disabled={isSubmitting}
+                >
                   {isSubmitting ? "Working..." : "Login"}
                 </Button>
                 {/* <Button variant="outline" type="button">

@@ -5,6 +5,7 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 import { Button } from "../ui/button";
 import { Controller } from "react-hook-form";
 import { DatePicker } from "../common/DatePicker";
+import AddButtonDotted from "../common/AddButtonDotted";
 
 const CertificationForm = () => {
   const {
@@ -20,15 +21,14 @@ const CertificationForm = () => {
   return (
     <div className="flex flex-col bg-gray-50 w-full">
       {fields.map((obj, index) => (
-        <div
-          key={obj.id}
-          className="flex flex-col gap-3 bg-green-50 p-4 mb-4 rounded-xl"
-        >
+        <div key={obj.id} className="flex flex-col gap-3 mb-4 rounded-xl">
           <h1 className="text-xl">Certification Details {index + 1}</h1>
 
           <div className="flex md:flex-col max-md:flex-col gap-3">
             <div className="flex flex-col gap-3 flex-1">
-              <Label htmlFor="issuingAuthority">Issuing Authority</Label>
+              <Label htmlFor="issuingAuthority">
+                Issuing Authority <span className="text-red-900">*</span>
+              </Label>
 
               <div className="gap-y-1 flex flex-col">
                 <Input
@@ -97,9 +97,7 @@ const CertificationForm = () => {
 
           <Button
             variant={"outline"}
-            className={`w-full mt-1 ${
-              fields.length === 1 ? "hidden" : "block"
-            }`}
+            className={`w-full mt-1`}
             onClick={() => remove(index)}
           >
             Remove Certification
@@ -107,9 +105,17 @@ const CertificationForm = () => {
         </div>
       ))}
 
-      <Button variant={"outline"} className={"w-full"} onClick={() => append()}>
-        Add Certification
-      </Button>
+      {fields.length === 0 ? (
+        <AddButtonDotted onClick={() => append()} text="+ Add Certification" />
+      ) : (
+        <Button
+          variant={"outline"}
+          className={"w-full"}
+          onClick={() => append()}
+        >
+          Add Certification
+        </Button>
+      )}
 
       {errors?.certifications && (
         <p className="pb-2 text-red-900">{errors.certifications?.message}</p>

@@ -3,6 +3,7 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
+import AddButtonDotted from "../common/AddButtonDotted";
 
 export const SkillsForm = () => {
   const {
@@ -51,14 +52,21 @@ export const SkillsForm = () => {
         </div>
       ))}
 
-      <Button
-        type="button"
-        variant={"outline"}
-        className={"w-full"}
-        onClick={() => append({ skillName: "" })}
-      >
-        Add a skill
-      </Button>
+      {fields.length === 0 ? (
+        <AddButtonDotted
+          onClick={() => append({ skillName: "" })}
+          text="+ Add Skill"
+        />
+      ) : (
+        <Button
+          type="button"
+          variant={"outline"}
+          className={"w-full"}
+          onClick={() => append({ skillName: "" })}
+        >
+          Add a skill
+        </Button>
+      )}
     </div>
   );
 };

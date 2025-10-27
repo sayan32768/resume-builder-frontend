@@ -11,8 +11,6 @@ export const UserProvider = ({ children }) => {
     const fetchUser = async () => {
       try {
         const res = await api.get("/user/getUserDetails");
-        console.log("BBBBBBBB");
-        console.log(res);
         if (res.data.success) {
           setUser(res.data.user);
         }

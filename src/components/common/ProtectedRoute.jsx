@@ -13,7 +13,9 @@ const ProtectedRoute = ({ children }) => {
       //       <p className="text-gray-700 text-lg">Loading Data...</p>
       //     </div>
       //   </div>
-      <div></div>
+      <div className="text-3xl text-gray-400 w-[100vw] h-[100vh] flex flex-col justify-center text-center">
+        Loading...
+      </div>
     );
   return <>{user ? children : <Navigate to={"/login"} replace={true} />}</>;
 };

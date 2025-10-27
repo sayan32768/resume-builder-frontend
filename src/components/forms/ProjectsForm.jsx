@@ -3,6 +3,7 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import AddButtonDotted from "../common/AddButtonDotted";
 
 const LinksSection = ({ index }) => {
   const {
@@ -83,8 +84,11 @@ const ProjectsForm = () => {
       {fields.map((obj, index) => {
         return (
           <div key={obj.id}>
-            <div className="flex flex-col gap-y-3 rounded-2xl bg-green-100 p-3">
-              <Label>Project Title</Label>
+            <h1 className="text-xl mb-3">Project {index + 1} Details</h1>
+            <div className="flex flex-col gap-y-3 rounded-2xl">
+              <Label>
+                Project Title <span className="text-red-900">*</span>
+              </Label>
               <div className="flex flex-col gap-y-1">
                 <Input {...register(`projects.${index}.title`, {})} />
                 {errors.projects?.[index]?.title && (
@@ -94,7 +98,9 @@ const ProjectsForm = () => {
                 )}
               </div>
 
-              <Label>Project Description</Label>
+              <Label>
+                Project Description <span className="text-red-900">*</span>
+              </Label>
               <div className="flex flex-col gap-y-1">
                 <Input {...register(`projects.${index}.description`, {})} />
                 {errors.projects?.[index]?.description && (
@@ -128,14 +134,19 @@ const ProjectsForm = () => {
           </div>
         );
       })}
-      <Button
-        type="button"
-        variant={"outline"}
-        className={""}
-        onClick={() => append()}
-      >
-        + Add Project
-      </Button>
+
+      {fields.length === 0 ? (
+        <AddButtonDotted onClick={() => append()} text="+ Add Project" />
+      ) : (
+        <Button
+          type="button"
+          variant={"outline"}
+          className={""}
+          onClick={() => append()}
+        >
+          + Add Project
+        </Button>
+      )}
     </div>
   );
 };

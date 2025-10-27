@@ -12,11 +12,11 @@ export const resumeSchema = z.object({
     // }),
     personalDetails: personalFormSchema.default({}),
     educationDetails: z.array(educationFormSchema).min(1, "At least one education is required").default([educationFormSchema.parse({})]),
-    skills: z.array(skillSchema).min(1, "At least one skill is required").default([skillSchema.parse({})]),
-    professionalExperience: z.array(experienceSchema).optional().default([experienceSchema.parse({})]),
-    projects: z.array(projectSchema).optional().default([projectSchema.parse({})]),
-    otherExperience: z.array(experienceSchema).optional().default([experienceSchema.parse({})]),
-    certifications: z.array(certificationSchema).optional().default([certificationSchema.parse({})])
+    skills: z.array(skillSchema).optional(),
+    professionalExperience: z.array(experienceSchema).optional(),
+    projects: z.array(projectSchema).optional(),
+    otherExperience: z.array(experienceSchema).optional(),
+    certifications: z.array(certificationSchema).optional(),
 })
     .strict()
     .strip();

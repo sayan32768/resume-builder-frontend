@@ -28,10 +28,7 @@ const EducationDetailsForm = () => {
   return (
     <div className="flex flex-col bg-gray-50 w-full">
       {fields.map((obj, index) => (
-        <div
-          key={obj.id}
-          className="flex flex-col gap-3 bg-green-50 p-4 mb-4 rounded-xl"
-        >
+        <div key={obj.id} className="flex flex-col gap-3 p-0 mb-4 rounded-xl">
           <h1 className="text-xl">Education Details {index + 1}</h1>
 
           <div className="flex md:flex-row max-md:flex-col gap-3">
