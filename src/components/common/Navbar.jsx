@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "../ui/button";
-import { AtSign, User2 } from "lucide-react";
+import { AtSign, LogOut, User2 } from "lucide-react";
 
 const Navbar = ({ user, handleLogout }) => {
   const [isDropdownShowing, setIsDropdownShowing] = useState(false);
@@ -91,7 +91,7 @@ const Navbar = ({ user, handleLogout }) => {
             </div>
 
             <div className="hover:cursor-pointer flex flex-row space-x-3">
-              <User2 />
+              <LogOut />
               <a className={""} onClick={handleLogout} variant={"outline"}>
                 Logout
               </a>

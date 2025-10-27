@@ -14,8 +14,7 @@ const ResumePreview = () => {
   const skills = data?.skills || [];
 
   return (
-    <div className="text-gray-800 font-sans p-8 w-[210mm] h-[297mm] bg-green-200">
-      {/* Header */}
+    <div className="text-gray-800 font-sans p-8 w-[210mm] h-[297mm] bg-white outline">
       <header className="border-b pb-4 mb-4">
         <h1 className="text-2xl font-bold">
           {personal?.fullName || "Your Name"}
@@ -27,7 +26,6 @@ const ResumePreview = () => {
         {personal?.location && <p>{personal.location}</p>}
       </header>
 
-      {/* Summary */}
       {personal?.summary && (
         <section className="mb-4">
           <h2 className="text-xl font-semibold border-b mb-2">Summary</h2>
@@ -35,7 +33,6 @@ const ResumePreview = () => {
         </section>
       )}
 
-      {/* Education */}
       {education?.length > 0 && (
         <section className="mb-4">
           <h2 className="text-xl font-semibold border-b mb-2">Education</h2>
@@ -56,7 +53,6 @@ const ResumePreview = () => {
         </section>
       )}
 
-      {/* Professional Experience */}
       {experience?.length > 0 && (
         <section className="mb-4">
           <h2 className="text-xl font-semibold border-b mb-2">
@@ -75,7 +71,6 @@ const ResumePreview = () => {
         </section>
       )}
 
-      {/* Projects */}
       {projects?.length > 0 && (
         <section className="mb-4">
           <h2 className="text-xl font-semibold border-b mb-2">Projects</h2>
@@ -103,8 +98,6 @@ const ResumePreview = () => {
           ))}
         </section>
       )}
-
-      {/* Other Experience */}
       {otherExp?.length > 0 && (
         <section className="mb-4">
           <h2 className="text-xl font-semibold border-b mb-2">
@@ -123,7 +116,6 @@ const ResumePreview = () => {
         </section>
       )}
 
-      {/* Certifications */}
       {certifications?.length > 0 && (
         <section className="mb-4">
           <h2 className="text-xl font-semibold border-b mb-2">
@@ -154,7 +146,6 @@ const ResumePreview = () => {
         </section>
       )}
 
-      {/* Skills */}
       {skills?.length > 0 && (
         <section>
           <h2 className="text-xl font-semibold border-b mb-2">Skills</h2>

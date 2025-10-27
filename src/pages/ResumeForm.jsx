@@ -20,13 +20,19 @@ import {
 } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
-import { MenuIcon } from "lucide-react";
+import { ArrowLeft, MenuIcon } from "lucide-react";
 import SlidingSidebar from "@/components/common/SlidingSidebar";
+import ResumePreview2 from "@/components/common/ResumePreview2";
+import Navbar from "@/components/common/Navbar";
+import { FaBackward } from "react-icons/fa";
 const ResumeForm = () => {
   // localStorage.removeItem(
   //   "resume_draft",
   //   JSON.stringify(localStorage.getItem("resume_draft"))
   // );
+
+  const [backdrop, setBackdrop] = useState(false);
+
   const stepNames = [
     { id: 1, title: "Personal" },
     { id: 2, title: "Education" },
@@ -116,11 +122,44 @@ const ResumeForm = () => {
     if (savedData) {
       try {
         const parsed = JSON.parse(savedData);
-        const cleanData = Object.keys(resumeSchema.shape).reduce((acc, key) => {
-          if (parsed[key] !== undefined) acc[key] = parsed[key];
-          return acc;
-        }, {});
-        methods.reset(cleanData);
+
+        if (
+          parsed.professionalExperience &&
+          Array.isArray(parsed.professionalExperience)
+        ) {
+          parsed.professionalExperience.forEach((exp) => {
+            if (exp.dates?.startDate) {
+              exp.dates.startDate = new Date(exp.dates.startDate);
+            }
+            if (exp.dates?.endDate) {
+              exp.dates.endDate = new Date(exp.dates.endDate);
+            }
+          });
+        }
+
+        if (parsed.otherExperience && Array.isArray(parsed.otherExperience)) {
+          parsed.otherExperience.forEach((exp) => {
+            if (exp.dates?.startDate) {
+              exp.dates.startDate = new Date(exp.dates.startDate);
+            }
+            if (exp.dates?.endDate) {
+              exp.dates.endDate = new Date(exp.dates.endDate);
+            }
+          });
+        }
+
+        if (parsed.educationDetails && Array.isArray(parsed.educationDetails)) {
+          parsed.educationDetails.forEach((edu) => {
+            if (edu.dates?.startDate) {
+              edu.dates.startDate = new Date(edu.dates.startDate);
+            }
+            if (edu.dates?.endDate) {
+              edu.dates.endDate = new Date(edu.dates.endDate);
+            }
+          });
+        }
+
+        methods.reset(parsed);
       } catch (err) {
         console.error("Failed to load draft:", err);
       }
@@ -171,11 +210,12 @@ const ResumeForm = () => {
   };
 
   if (!types.includes(type))
-    return (
-      <div className="text-3xl text-gray-400 w-[100vw] h-[100vh] flex flex-col justify-center text-center">
-        Error
-      </div>
-    );
+    // return (
+    //   <div className="text-3xl text-gray-400 w-[100vw] h-[100vh] flex flex-col justify-center text-center">
+    //     Error
+    //   </div>
+    // );
+    return null;
 
   return (
     <FormProvider {...methods}>
@@ -234,13 +274,37 @@ const ResumeForm = () => {
           </div>
         </div>
 
-        <div className="flex lg:flex-row max-lg:flex-col lg:items-start items-center justify-center lg:gap-x-8 lg:px-14 lg:pt-14 max-lg:pt-8 max-lg:px-8 max-lg:gap-y-6">
+        <div className="flex lg:flex-row max-lg:flex-col lg:items-start items-center justify-center lg:gap-x-8 lg:px-14 lg:pt-14 max-lg:pt-8 max-lg:px-8 max-lg:gap-y-6 mb-8">
           <div className="lg:max-w-[594px] md:w-[90%] max-md:w-full">
             <div
-              onClick={openModal}
-              className="md:hidden relative border-2 w-12 h-12 mb-6 rounded-xl"
+              onClick={() => navigate("/home")}
+              className="hover:cursor-pointer hover:text-slate-600 flex flex-row pb-8 w-fit"
             >
-              <MenuIcon className="absolute mx-[22%] my-[22%]" />
+              <div className="flex flex-row gap-x-3">
+                <ArrowLeft />
+                <div>Go back to home</div>
+              </div>
+            </div>
+            <div className="flex flex-row justify-between">
+              <div
+                onClick={openModal}
+                className="md:hidden relative border-2 w-12 h-12 mb-6 rounded-xl"
+              >
+                <MenuIcon className="absolute mx-[22%] my-[22%]" />
+              </div>
+
+              <Button
+                className={
+                  "md:hidden hover:cursor-pointer hover:bg-gray-900 hover:text-white"
+                }
+                onClick={(e) => {
+                  e.preventDefault();
+                  setBackdrop(true);
+                }}
+                variant={"outline"}
+              >
+                Show Preview
+              </Button>
             </div>
 
             {step === 1 && <PersonalForm />}
@@ -286,7 +350,10 @@ const ResumeForm = () => {
             {step === 7 ? (
               <Button
                 className={"bg-gray-900 text-white w-full mt-3"}
-                onClick={reactToPrintFn}
+                onClick={(e) => {
+                  e.preventDefault();
+                  reactToPrintFn();
+                }}
               >
                 Print
               </Button>
@@ -295,25 +362,46 @@ const ResumeForm = () => {
             )}
           </div>
 
-          <div className="flex justify-center items-start max-md:hidden">
+          {backdrop && (
             <div
-              className="relative"
-              style={{
-                width: "calc(210mm * 0.7)",
-                height: "calc(297mm * 0.7)",
+              onClick={(e) => {
+                e.preventDefault();
+                setBackdrop(false);
               }}
+              className="fixed inset-0 bg-white md:hidden text-center"
             >
-              <div
-                className="absolute top-0 left-0 w-[210mm] h-[297mm]"
-                style={{
-                  transform: "scale(0.7)",
-                  transformOrigin: "top left",
-                }}
-              >
+              {/* <div className="relative mt-7">Click anywhere to close</div> */}
+            </div>
+          )}
+
+          <div
+            className={`max-md:absolute top-0 z-5 max-md:${
+              backdrop ? "block" : "hidden"
+            }`}
+          >
+            <div className="relative my-8 w-full text-center md:hidden">
+              This is what your resume will look like
+            </div>
+            <div className="md:w-[calc(210mm*0.7)] md:h-[calc(297mm*0.7)] max-md:w-[calc(210mm*0.44)] max-md:h-[calc(297mm*0.44)]">
+              <div className="w-[210mm] h-[297mm] md:scale-[0.7] max-md:scale-[0.44] origin-top-left">
                 <div id="resume-preview" ref={resumeRef}>
-                  <ResumePreview />
+                  {type == "Modern" ? <ResumePreview2 /> : <ResumePreview />}
                 </div>
               </div>
+            </div>
+            <div className="relative flex flex-col px-10 md:hidden">
+              <Button
+                className={
+                  "md:hidden hover:cursor-pointer hover:bg-gray-900 hover:text-white my-8"
+                }
+                onClick={(e) => {
+                  e.preventDefault();
+                  setBackdrop(false);
+                }}
+                variant={"outline"}
+              >
+                Close Preview
+              </Button>
             </div>
           </div>
         </div>

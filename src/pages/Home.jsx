@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import resumeImg from "../assets/resume1.png";
+import resumeImg2 from "../assets/resume2.png";
 import { Card, CardContent } from "@/components/ui/card";
 import { FileText, MoreVertical } from "lucide-react";
 import { getData } from "@/contexts/UserContext";
@@ -90,7 +91,7 @@ const Home = () => {
           >
             <img
               className="rounded-[8px] w-full h-full object-cover shadow-2xl"
-              src={resumeImg}
+              src={resumeImg2}
               alt="Resume Preview"
             />
             <div className="absolute inset-[0px] bg-black/0 group-hover:bg-black/50 flex items-center justify-center transition-all duration-300">
@@ -131,7 +132,7 @@ const Home = () => {
               {dataLoading
                 ? Array.from([1, 2, 3, 4]).map((_, idx) => (
                     <div key={idx} className="flex items-center space-x-4">
-                      <Skeleton className="bg-gray-300 h-12 w-12 rounded-full" />
+                      <Skeleton className="bg-gray-300 h-8 w-8 rounded-full" />
                       <div className="space-y-2">
                         <Skeleton className="bg-gray-300 h-4 w-[250px]" />
                         <Skeleton className="bg-gray-300 h-4 w-[200px]" />

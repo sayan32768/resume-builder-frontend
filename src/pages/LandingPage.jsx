@@ -146,7 +146,7 @@ const LandingPage = () => {
 
         <div className="flex flex-col lg:gap-y-8 md:gap-y-6 max-md:gap-y-4 pt-2">
           <h1 className="text-center lg:text-2xl md:text-2xl max-md:text-2xl">
-            Choose from a wide list of design
+            We have got two options for you
           </h1>
 
           <div className="flex flex-row justify-center lg:gap-5 max-lg:gap-3">
@@ -157,11 +157,11 @@ const LandingPage = () => {
                 alt="Resume Preview"
               />
 
-              <div className="absolute inset-[0px] bg-black/0 group-hover:bg-black/60 flex items-center justify-center transition-all duration-300">
+              {/* <div className="absolute inset-[0px] bg-black/0 group-hover:bg-black/60 flex items-center justify-center transition-all duration-300">
                 <span className="text-white text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   {"Continue"}
                 </span>
-              </div>
+              </div> */}
             </div>
             <div className="relative group lg:w-[25vw] max-lg:w-[30vw] aspect-[8.5/11] border-slate-500 border-1 rounded-md p-0 hover:border-black overflow-hidden transition-all duration-300">
               <img
@@ -169,11 +169,11 @@ const LandingPage = () => {
                 src={img2}
                 alt="Resume Preview"
               />
-              <div className="absolute inset-[0px] bg-black/0 group-hover:bg-black/60 flex items-center justify-center transition-all duration-300">
+              {/* <div className="absolute inset-[0px] bg-black/0 group-hover:bg-black/60 flex items-center justify-center transition-all duration-300">
                 <span className="text-white text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   {"Continue"}
                 </span>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

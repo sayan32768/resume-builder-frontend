@@ -22,7 +22,9 @@ export function DatePicker({ field }) {
           id="date"
           className="justify-between font-normal"
         >
-          {field.value ? field.value.toLocaleDateString() : "Select date"}
+          {field.value
+            ? new Date(field.value).toLocaleDateString()
+            : "Select date"}
           <ChevronDownIcon />
         </Button>
       </PopoverTrigger>
