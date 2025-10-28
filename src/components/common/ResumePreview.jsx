@@ -14,7 +14,7 @@ const ResumePreview = () => {
   const skills = data?.skills || [];
 
   return (
-    <div className="text-gray-800 font-sans p-8 w-[210mm] h-[297mm] bg-white outline">
+    <div className="text-gray-800 font-sans p-8 w-[210mm] h-[297mm] bg-white overflow-hidden outline-1">
       <header className="border-b pb-4 mb-4">
         <h1 className="text-2xl font-bold">
           {personal?.fullName || "Your Name"}
@@ -23,7 +23,18 @@ const ResumePreview = () => {
           {personal?.email || "you@example.com"} |{" "}
           {personal?.phone || "+91 XXXXXXXXXX"}
         </p>
-        {personal?.location && <p>{personal.location}</p>}
+        {personal?.address && <p>{personal.address}</p>}
+        {personal?.about && <p>{personal.about}</p>}
+        {personal?.socials?.length > 0 && (
+          <p>
+            {personal.socials.map((s, i) => (
+              <span key={i}>
+                {s.name}: {s.link || "-"}
+                {i < personal.socials.length - 1 ? ", " : ""}
+              </span>
+            ))}
+          </p>
+        )}
       </header>
 
       {personal?.summary && (
@@ -39,13 +50,19 @@ const ResumePreview = () => {
           {education.map((edu, i) => (
             <div key={i} className="mb-2">
               <p className="font-bold">{edu.degree || "Degree"}</p>
-              <p>
-                {edu.name || "Institute Name"} {edu.year && `— ${edu.year}`}
-              </p>
-              {edu.location && <p>{edu.location}</p>}
-              {edu.grades?.score && (
+              <p>{edu.name || "Institute Name"}</p>
+              {edu.dates?.startDate && edu.dates?.endDate && (
                 <p>
-                  {edu.grades.type}: {edu.grades.score}
+                  {new Date(edu.dates.startDate).toLocaleDateString("en-IN")} —{" "}
+                  {new Date(edu.dates.endDate).toLocaleDateString("en-IN")}
+                </p>
+              )}
+              {edu.location && <p>{edu.location}</p>}
+              {edu.grades && (
+                <p>
+                  {edu.grades.type && `${edu.grades.type}:`}{" "}
+                  {edu.grades.score || "-"}{" "}
+                  {edu.grades.message && `(${edu.grades.message})`}
                 </p>
               )}
             </div>
@@ -61,11 +78,15 @@ const ResumePreview = () => {
           {experience.map((exp, i) => (
             <div key={i} className="mb-2">
               <p className="font-bold">{exp.position || "Position"}</p>
-              <p>
-                {exp.company || "Company Name"}{" "}
-                {exp.duration && `— ${exp.duration}`}
-              </p>
-              {exp.description && <p>{exp.description}</p>}
+              <p>{exp.companyName || "Company Name"}</p>
+              {exp.companyAddress && <p>{exp.companyAddress}</p>}
+              {exp.dates?.startDate && exp.dates?.endDate && (
+                <p>
+                  {new Date(exp.dates.startDate).toLocaleDateString("en-IN")} —{" "}
+                  {new Date(exp.dates.endDate).toLocaleDateString("en-IN")}
+                </p>
+              )}
+              {exp.workDescription && <p>{exp.workDescription}</p>}
             </div>
           ))}
         </section>
@@ -78,6 +99,7 @@ const ResumePreview = () => {
             <div key={i} className="mb-2">
               <p className="font-bold">{proj.title || "Project Title"}</p>
               {proj.description && <p>{proj.description}</p>}
+              {proj.extraDetails && <p>{proj.extraDetails}</p>}
               {proj.links?.length > 0 && (
                 <ul className="list-disc pl-5">
                   {proj.links.map((l, idx) => (
@@ -98,6 +120,7 @@ const ResumePreview = () => {
           ))}
         </section>
       )}
+
       {otherExp?.length > 0 && (
         <section className="mb-4">
           <h2 className="text-xl font-semibold border-b mb-2">
@@ -105,12 +128,17 @@ const ResumePreview = () => {
           </h2>
           {otherExp.map((exp, i) => (
             <div key={i} className="mb-2">
-              <p className="font-bold">{exp.title || "Title"}</p>
-              <p>
-                {exp.organization || "Organization"}{" "}
-                {exp.duration && `— ${exp.duration}`}
+              <p className="font-bold">
+                {exp.position || exp.companyName || "Title"}
               </p>
-              {exp.description && <p>{exp.description}</p>}
+              {exp.companyAddress && <p>{exp.companyAddress}</p>}
+              {exp.dates?.startDate && exp.dates?.endDate && (
+                <p>
+                  {new Date(exp.dates.startDate).toLocaleDateString("en-IN")} —{" "}
+                  {new Date(exp.dates.endDate).toLocaleDateString("en-IN")}
+                </p>
+              )}
+              {exp.workDescription && <p>{exp.workDescription}</p>}
             </div>
           ))}
         </section>
@@ -149,7 +177,7 @@ const ResumePreview = () => {
       {skills?.length > 0 && (
         <section>
           <h2 className="text-xl font-semibold border-b mb-2">Skills</h2>
-          <p>{skills.map((s) => s.skillName).join(", ")}</p>
+          <p>{skills.map((s) => s.skillName || "-").join(", ")}</p>
         </section>
       )}
     </div>

@@ -10,6 +10,7 @@ export const resumeSchema = z.object({
     // resumeType: z.enum(["Classic", "Modern"], {
     //     message: "Choose a valid resume type"
     // }),
+    resumeTitle: z.string().min(1, "Resume title is required").default(""),
     personalDetails: personalFormSchema.default({}),
     educationDetails: z.array(educationFormSchema).min(1, "At least one education is required").default([educationFormSchema.parse({})]),
     skills: z.array(skillSchema).optional(),

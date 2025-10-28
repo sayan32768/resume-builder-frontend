@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Cross, Mail, VerifiedIcon, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { replace, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -44,7 +45,12 @@ const Verify = () => {
     verifyEmail();
   }, [token, navigate]);
 
-  return <div>{status}</div>;
+  return (
+    <div className="border-1 p-10 m-10 text-center rounded-xl border-slate-400 bg-slate-300 text-slate-800 flex flex-col items-center gap-y-6">
+      {status === "Email Verified Successfully" ? <VerifiedIcon /> : <X />}
+      <p>{status}</p>
+    </div>
+  );
 };
 
 export default Verify;

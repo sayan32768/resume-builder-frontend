@@ -25,6 +25,8 @@ import SlidingSidebar from "@/components/common/SlidingSidebar";
 import ResumePreview2 from "@/components/common/ResumePreview2";
 import Navbar from "@/components/common/Navbar";
 import { FaBackward } from "react-icons/fa";
+import { Input } from "@/components/ui/input";
+import { Label } from "@radix-ui/react-dropdown-menu";
 const ResumeForm = () => {
   // localStorage.removeItem(
   //   "resume_draft",
@@ -93,7 +95,57 @@ const ResumeForm = () => {
         if (res.data.success) {
           setType(res.data.data.resumeType);
           const { resumeType, ...newData } = res.data.data;
-          methods.reset(newData);
+
+          const parsed = newData;
+
+          if (
+            parsed.professionalExperience &&
+            Array.isArray(parsed.professionalExperience)
+          ) {
+            parsed.professionalExperience.forEach((exp) => {
+              if (exp.dates?.startDate) {
+                exp.dates.startDate = new Date(exp.dates.startDate);
+              }
+              if (exp.dates?.endDate) {
+                exp.dates.endDate = new Date(exp.dates.endDate);
+              }
+            });
+          }
+
+          if (parsed.otherExperience && Array.isArray(parsed.otherExperience)) {
+            parsed.otherExperience.forEach((exp) => {
+              if (exp.dates?.startDate) {
+                exp.dates.startDate = new Date(exp.dates.startDate);
+              }
+              if (exp.dates?.endDate) {
+                exp.dates.endDate = new Date(exp.dates.endDate);
+              }
+            });
+          }
+
+          if (
+            parsed.educationDetails &&
+            Array.isArray(parsed.educationDetails)
+          ) {
+            parsed.educationDetails.forEach((edu) => {
+              if (edu.dates?.startDate) {
+                edu.dates.startDate = new Date(edu.dates.startDate);
+              }
+              if (edu.dates?.endDate) {
+                edu.dates.endDate = new Date(edu.dates.endDate);
+              }
+            });
+          }
+
+          if (parsed.certifications && Array.isArray(parsed.certifications)) {
+            parsed.certifications.forEach((cert) => {
+              if (cert.issueDate) {
+                cert.issueDate = new Date(cert.issueDate);
+              }
+            });
+          }
+
+          methods.reset(parsed);
         } else {
           toast.error("Failed to fetch resume");
         }
@@ -166,6 +218,10 @@ const ResumeForm = () => {
     }
   }, [resumeId, methods]);
 
+  const [modal, showModal] = useState(false);
+
+  const showNameModal = () => {};
+
   const onSubmit = async (data) => {
     data = { ...data, resumeType: type };
     console.log("Final Resume Data", data);
@@ -225,7 +281,42 @@ const ResumeForm = () => {
         show={showSidebar}
         onClose={() => setShowSidebar(false)}
       />
+
       <form onSubmit={methods.handleSubmit(onSubmit)}>
+        {modal && (
+          <div
+            onClick={() => showModal(false)}
+            className="fixed inset-0 z-10 flex items-center justify-center bg-black/60"
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white p-10 rounded-sm shadow-lg w-full max-w-lg mx-4 flex flex-col gap-6"
+            >
+              <div className="flex flex-col gap-2">
+                <Label className="text-sm">Enter name</Label>
+                <Input
+                  {...methods.register("resumeTitle", {
+                    required: "Title is required",
+                  })}
+                />
+                {methods.formState.errors.resumeTitle && (
+                  <p className="pb-2 text-red-900">
+                    {methods.formState.errors.resumeTitle.message}
+                  </p>
+                )}
+              </div>
+
+              <Button
+                type="submit"
+                disabled={methods.formState.isSubmitting}
+                className="bg-gray-900 text-white flex-1"
+              >
+                {methods.formState.isSubmitting ? "Submitting..." : "Submit"}
+              </Button>
+            </div>
+          </div>
+        )}
+
         <div className="md:hidden">
           <div
             className="h-1 bg-black"
@@ -339,11 +430,13 @@ const ResumeForm = () => {
                 </Button>
               ) : (
                 <Button
-                  disabled={methods.formState.isSubmitting}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    showModal(true);
+                  }}
                   className={"bg-gray-900 text-white flex-1"}
-                  type="submit"
                 >
-                  {methods.formState.isSubmitting ? "Submitting..." : "Submit"}
+                  Submit
                 </Button>
               )}
             </div>

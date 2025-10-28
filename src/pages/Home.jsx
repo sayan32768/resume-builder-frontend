@@ -17,7 +17,7 @@ const Home = () => {
 
   const navigate = useNavigate();
 
-  const [pastResumes, setPastResumes] = useState(null);
+  const [pastResumes, setPastResumes] = useState([]);
 
   const [dataLoading, setDataLoading] = useState(true);
 
@@ -42,7 +42,7 @@ const Home = () => {
         }
       } catch (error) {
         setDataLoading(false);
-        toast.error("Couldn't get past resumes");
+        // toast.error("Couldn't get past resumes");
       } finally {
         setDataLoading(false);
       }
@@ -79,7 +79,7 @@ const Home = () => {
     <div className="bg-gray-100 flex flex-col items-center">
       <Navbar user={user} handleLogout={handleLogout} />
 
-      <h1 className="text-lg font-semibold text-center mb-3 mt-6">
+      <h1 className="text-lg font-semibold text-center mb-8 mt-6">
         Choose a template to get started
       </h1>
 
@@ -124,57 +124,64 @@ const Home = () => {
           <h1 className="text-center">Classic</h1>
         </div>
       </div>
-      <div id="previously-saved-resumes-section">
-        <Card className="w-full md:max-w-[80vw] border-0 rounded-sm shadow-none">
-          <CardContent className="max-md:p-8">
-            <h2 className="text-lg font-semibold mb-3">Your Past Templates</h2>
-            <div className="grid max-md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {dataLoading
-                ? Array.from([1, 2, 3, 4]).map((_, idx) => (
-                    <div key={idx} className="flex items-center space-x-4">
-                      <Skeleton className="bg-gray-300 h-8 w-8 rounded-full" />
-                      <div className="space-y-2">
-                        <Skeleton className="bg-gray-300 h-4 w-[250px]" />
-                        <Skeleton className="bg-gray-300 h-4 w-[200px]" />
-                      </div>
-                    </div>
-                  ))
-                : pastResumes.map((doc, index) => (
-                    <div
-                      onClick={() => navigate(`/edit/${doc._id}`)}
-                      key={index}
-                      className="hover:cursor-pointer relative flex flex-col bg-white shadow-sm border border-slate-500 rounded-lg w-full p-6 hover:shadow-lg hover:border-2"
-                    >
-                      <div className="flex items-center mb-4">
-                        <div className="w-6">
-                          <FileText />
-                        </div>
-                        <div className="flex flex-row justify-between w-full">
-                          <h5 className="line-clamp-2 ml-3 text-slate-800 text-l font-semibold">
-                            {doc.resumeName ||
-                              "Resume Name should not be this long  but if it is, this is how it will look"}
-                          </h5>
-                          <h5 className="ml-3 text-slate-800 text-sm font-semibold pr-6">
-                            {doc.resumeType}
-                          </h5>
+      {pastResumes.length !== 0 ? (
+        <div id="previously-saved-resumes-section">
+          <Card className="w-full md:max-w-[80vw] border-0 rounded-sm shadow-none">
+            <CardContent className="max-md:p-8">
+              <h2 className="text-lg font-semibold text-center max-md:my-8 md:mt-10 md:mb-8">
+                Your Resumes
+              </h2>
+              {/* <div className="grid max-md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"> */}
+              <div className="flex flex-row gap-x-3 gap-y-3 justify-center flex-wrap">
+                {/* Loadder no need */}
+                {dataLoading
+                  ? [1, 2, 3, 4].map((_, idx) => (
+                      <div key={idx} className="flex items-center space-x-4">
+                        <Skeleton className="bg-gray-300 h-8 w-8 rounded-full" />
+                        <div className="space-y-2">
+                          <Skeleton className="bg-gray-300 h-4 w-[250px]" />
+                          <Skeleton className="bg-gray-300 h-4 w-[200px]" />
                         </div>
                       </div>
-                      <h2>Modified at</h2>
-                      <p className="block text-slate-800 leading-normal font-light mb-4">
-                        {new Date(doc.updatedAt).toLocaleString("en-IN", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </p>
-                    </div>
-                  ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+                    ))
+                  : pastResumes.map((doc, index) => (
+                      <div
+                        onClick={() => navigate(`/edit/${doc._id}`)}
+                        key={index}
+                        className="w-[300px] hover:cursor-pointer relative flex flex-col bg-white shadow-sm border border-slate-500 rounded-lg p-6 hover:shadow-lg hover:border-2"
+                      >
+                        <div className="flex items-center mb-4">
+                          <div className="w-6">
+                            <FileText />
+                          </div>
+                          <div className="flex flex-row justify-between w-full">
+                            <h5 className="truncate ml-3 text-slate-800 text-l font-semibold">
+                              {doc.resumeTitle || ""}
+                            </h5>
+                            <h5 className="ml-3 text-slate-800 text-sm font-semibold pr-6">
+                              {doc.resumeType}
+                            </h5>
+                          </div>
+                        </div>
+                        <h2>Modified at</h2>
+                        <p className="block text-slate-800 leading-normal font-light mb-4">
+                          {new Date(doc.updatedAt).toLocaleString("en-IN", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </p>
+                      </div>
+                    ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      ) : (
+        <div className="mb-10"></div>
+      )}
       <div className="md:pt-10 w-full">
         <Footer />
       </div>
