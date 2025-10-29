@@ -23,6 +23,7 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import axios from "axios";
 import { toast } from "sonner";
 import { getData } from "@/contexts/UserContext";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export function SignupForm({ className, ...props }) {
   const { user, setUser } = getData();
@@ -56,7 +57,7 @@ export function SignupForm({ className, ...props }) {
   const onSubmit = async (data) => {
     setUser(null);
     try {
-      const res = await axios.post("/user/register", data, {
+      const res = await axios.post(`${API_BASE_URL}/user/register`, data, {
         headers: { "Content-Type": "application/json" },
       });
       if (res.data.success) {

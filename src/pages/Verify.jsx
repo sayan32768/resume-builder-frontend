@@ -3,6 +3,7 @@ import { Cross, Mail, VerifiedIcon, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { replace, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 const Verify = () => {
   console.log("HEHEHEHEHEHEH");
@@ -16,7 +17,7 @@ const Verify = () => {
     const verifyEmail = async () => {
       try {
         const res = await axios.post(
-          `/user/verify`,
+          `${API_BASE_URL}/user/verify`,
           {},
           {
             headers: {

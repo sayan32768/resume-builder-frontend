@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import Navbar from "@/components/common/Navbar";
 import Footer from "@/components/common/Footer";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 const Home = () => {
   const { user, setUser } = getData();
@@ -28,7 +29,7 @@ const Home = () => {
       setDataLoading(true);
       // await new Promise((resolve) => setTimeout(resolve, 3000));
       try {
-        const res = await axios.get("/resume/all", {
+        const res = await axios.get(`${API_BASE_URL}/resume/all`, {
           withCredentials: true,
           headers: {
             "Content-Type": "application/json",
@@ -56,7 +57,7 @@ const Home = () => {
   const handleLogout = async () => {
     try {
       const res = await axios.post(
-        `/user/logout`,
+        `${API_BASE_URL}/user/logout`,
         {},
         {
           withCredentials: true,
@@ -82,7 +83,7 @@ const Home = () => {
   const deleteResume = async (id) => {
     try {
       const res = await axios.delete(
-        `/resume/delete/${id}`,
+        `${API_BASE_URL}/resume/delete/${id}`,
         {},
         {
           withCredentials: true,

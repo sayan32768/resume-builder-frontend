@@ -23,6 +23,7 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import axios from "axios";
 import { toast } from "sonner";
 import { getData } from "@/contexts/UserContext";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export function LoginForm({ className, ...props }) {
   const { user, setUser } = getData();
@@ -51,7 +52,7 @@ export function LoginForm({ className, ...props }) {
     console.log("Final Resume Data", data);
     setUser(null);
     try {
-      const res = await axios.post("/user/login", data, {
+      const res = await axios.post(`${API_BASE_URL}/user/login`, data, {
         withCredentials: true,
         headers: {
           "Content-Type": "application/json",

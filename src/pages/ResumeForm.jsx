@@ -30,6 +30,8 @@ import { Label } from "@radix-ui/react-dropdown-menu";
 import generatePDF from "react-to-pdf";
 import { getData } from "@/contexts/UserContext";
 import { v4 as uuidv4 } from "uuid";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 const ResumeForm = () => {
   // localStorage.removeItem(
   //   "resume_draft",
@@ -88,10 +90,11 @@ const ResumeForm = () => {
   const downloadPDF = async (htmlContent) => {
     setDownloadLoading(true);
     try {
-      const response = await fetch("/resume/download", {
+      const response = await fetch(`${API_BASE_URL}/resume/download`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ htmlContent }),
+        credentials: "include",
       });
 
       if (response.status !== 200) {
@@ -132,7 +135,7 @@ const ResumeForm = () => {
       setLoading(true);
 
       try {
-        const res = await axios.get(`/resume/${resumeId}`, {
+        const res = await axios.get(`${API_BASE_URL}/resume/${resumeId}`, {
           withCredentials: true,
         });
         if (res.data.success) {
@@ -298,7 +301,7 @@ const ResumeForm = () => {
 
     try {
       if (!resumeId) {
-        const res = await axios.post("/resume/create", data, {
+        const res = await axios.post(`${API_BASE_URL}/resume/create`, data, {
           withCredentials: true,
           headers: {
             "Content-Type": "application/json",
@@ -313,12 +316,16 @@ const ResumeForm = () => {
         }
       } else {
         console.log(data);
-        const res = await axios.put(`/resume/${resumeId}`, data, {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const res = await axios.put(
+          `${API_BASE_URL}/resume/${resumeId}`,
+          data,
+          {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
         if (res.data.success) {
           localStorage.removeItem("resume_draft");
           navigate("/home", { replace: true });
