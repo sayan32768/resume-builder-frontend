@@ -54,7 +54,7 @@ const Navbar = ({ user, handleLogout }) => {
               className="hover:cursor-pointer rounded-full h-full bg-slate-900 text-white flex items-center justify-center"
             >
               <span className="text-2xl font-extrabold">
-                {user.username.charAt(0).toUpperCase()}
+                {user.email.charAt(0).toUpperCase()}
               </span>
             </div>
           </div>
@@ -78,7 +78,7 @@ const Navbar = ({ user, handleLogout }) => {
       </div>
 
       {isDropdownShowing && (
-        <div className="absolute text-sm md:right-0 max-md:right-3 bg-white w-[200px] z-3 shadow-xs px-4 py-4">
+        <div className="absolute text-sm md:right-0 max-md:right-3 bg-white w-[250px] z-3 shadow-xs px-4 py-4">
           <div className="flex flex-col space-y-2">
             <div className="flex flex-row space-x-3">
               <User2 />
@@ -87,7 +87,7 @@ const Navbar = ({ user, handleLogout }) => {
 
             <div className="flex flex-row space-x-3">
               <AtSign />
-              <a>{user.username}</a>
+              <a>{user.email}</a>
             </div>
 
             <div className="hover:cursor-pointer flex flex-row space-x-3">

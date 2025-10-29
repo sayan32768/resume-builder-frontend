@@ -20,13 +20,16 @@ import {
 } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
-import { ArrowLeft, MenuIcon } from "lucide-react";
+import { ArrowLeft, Cross, MenuIcon, X } from "lucide-react";
 import SlidingSidebar from "@/components/common/SlidingSidebar";
 import ResumePreview2 from "@/components/common/ResumePreview2";
 import Navbar from "@/components/common/Navbar";
 import { FaBackward } from "react-icons/fa";
 import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-dropdown-menu";
+import generatePDF from "react-to-pdf";
+import { getData } from "@/contexts/UserContext";
+import { v4 as uuidv4 } from "uuid";
 const ResumeForm = () => {
   // localStorage.removeItem(
   //   "resume_draft",
@@ -55,6 +58,8 @@ const ResumeForm = () => {
     "certifications",
   ];
 
+  const { user } = getData();
+
   const [step, setStep] = useState(1);
 
   const types = ["Classic", "Modern"];
@@ -78,21 +83,60 @@ const ResumeForm = () => {
     contentRef: resumeRef,
   });
 
+  const [downloading, setDownloadLoading] = useState(false);
+
+  const downloadPDF = async (htmlContent) => {
+    setDownloadLoading(true);
+    try {
+      const response = await fetch("/resume/download", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ htmlContent }),
+      });
+
+      if (response.status !== 200) {
+        setDownloadLoading(false);
+        toast.error("Error generating PDF");
+        return;
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${user.fullName
+        .replace(/\s+/g, "")
+        .toLowerCase()}-resume-${uuidv4()}.pdf`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      setDownloadLoading(false);
+      toast.error("Error generating PDF");
+    } finally {
+      setDownloadLoading(false);
+    }
+  };
+
   const methods = useForm({
     resolver: zodResolver(resumeSchema),
     defaultValues: resumeSchema.parse({}),
     mode: "onChange",
   });
 
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     if (!resumeId) return;
 
     const fetchResume = async () => {
+      setLoading(true);
+
       try {
         const res = await axios.get(`/resume/${resumeId}`, {
           withCredentials: true,
         });
         if (res.data.success) {
+          setLoading(false);
           setType(res.data.data.resumeType);
           const { resumeType, ...newData } = res.data.data;
 
@@ -147,10 +191,14 @@ const ResumeForm = () => {
 
           methods.reset(parsed);
         } else {
+          setLoading(false);
           toast.error("Failed to fetch resume");
         }
       } catch (err) {
+        setLoading(false);
         toast.error("Failed to fetch resume");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -211,6 +259,14 @@ const ResumeForm = () => {
           });
         }
 
+        if (parsed.certifications && Array.isArray(parsed.certifications)) {
+          parsed.certifications.forEach((cert) => {
+            if (cert.issueDate) {
+              cert.issueDate = new Date(cert.issueDate);
+            }
+          });
+        }
+
         methods.reset(parsed);
       } catch (err) {
         console.error("Failed to load draft:", err);
@@ -223,6 +279,20 @@ const ResumeForm = () => {
   const showNameModal = () => {};
 
   const onSubmit = async (data) => {
+    let allValid = true;
+
+    for (const key of stepKeys) {
+      const isValid = await methods.trigger(key);
+      if (!isValid) {
+        allValid = false;
+      }
+    }
+
+    if (!allValid) {
+      toast.error("Errors exist in your form, please recheck all the errors");
+      return;
+    }
+
     data = { ...data, resumeType: type };
     console.log("Final Resume Data", data);
 
@@ -265,13 +335,29 @@ const ResumeForm = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="w-full h-1 bg-gray-200 rounded overflow-hidden relative">
+        <div className="absolute top-0 left-0 h-1 w-1/3 bg-black animate-[loading_1.5s_linear_infinite]"></div>
+        <style>
+          {`
+        @keyframes loading {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+      `}
+        </style>
+      </div>
+    );
+  }
+
   if (!types.includes(type))
-    // return (
-    //   <div className="text-3xl text-gray-400 w-[100vw] h-[100vh] flex flex-col justify-center text-center">
-    //     Error
-    //   </div>
-    // );
-    return null;
+    return (
+      <div className="border-1 p-10 m-10 text-center rounded-xl border-slate-400 bg-slate-300 text-slate-800 flex flex-col items-center gap-y-6">
+        <X />
+        <p>Error Occurred</p>
+      </div>
+    );
 
   return (
     <FormProvider {...methods}>
@@ -309,7 +395,7 @@ const ResumeForm = () => {
               <Button
                 type="submit"
                 disabled={methods.formState.isSubmitting}
-                className="bg-gray-900 text-white flex-1"
+                className="bg-gray-900 text-white flex-1 hover:cursor-pointer"
               >
                 {methods.formState.isSubmitting ? "Submitting..." : "Submit"}
               </Button>
@@ -329,14 +415,36 @@ const ResumeForm = () => {
         <div className="flex flex-col items-center w-full pt-8 max-md:hidden">
           <div className="flex justify-between w-full max-w-3xl relative">
             {stepNames.map((s, index) => (
-              <div key={s.id} className="flex flex-col items-center flex-1">
+              <div
+                onClick={async (e) => {
+                  e.preventDefault();
+
+                  if (s.id <= step) {
+                    setStep(s.id);
+                    return;
+                  }
+
+                  let allValid = true;
+                  let id = s.id - 1;
+
+                  for (let i = 0; i < s.id; i++) {
+                    const isValid = await methods.trigger(stepKeys[i]);
+                    console.log(id);
+                    if (!isValid) {
+                      toast.error("Please fill in all the necessary Details");
+                      allValid = false;
+                      id = i;
+                      break;
+                    }
+                  }
+
+                  setStep(id + 1);
+                }}
+                key={s.id}
+                className="flex flex-col items-center flex-1"
+              >
                 <button
-                  onClick={async (e) => {
-                    e.preventDefault();
-                    const valid = await methods.trigger(stepKeys[step - 1]);
-                    if (valid) setStep(s.id);
-                  }}
-                  className={`w-8 h-8 rounded-full flex items-center justify-center
+                  className={`hover:cursor-pointer w-8 h-8 rounded-full flex items-center justify-center
             ${
               s.id === step
                 ? "bg-black text-white"
@@ -376,26 +484,65 @@ const ResumeForm = () => {
                 <div>Go back to home</div>
               </div>
             </div>
-            <div className="flex flex-row justify-between">
-              <div
-                onClick={openModal}
-                className="md:hidden relative border-2 w-12 h-12 mb-6 rounded-xl"
-              >
-                <MenuIcon className="absolute mx-[22%] my-[22%]" />
+
+            <div>
+              <div className="flex flex-row justify-between">
+                <div
+                  onClick={openModal}
+                  className="md:hidden relative border-2 w-12 h-12 mb-6 rounded-xl hover:cursor-pointer"
+                >
+                  <MenuIcon className="absolute mx-[22%] my-[22%]" />
+                </div>
+
+                <div className="flex flex-row gap-3">
+                  <Button
+                    className={
+                      "md:hidden hover:cursor-pointer hover:bg-gray-900 hover:text-white"
+                    }
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setBackdrop(true);
+                    }}
+                    variant={"outline"}
+                  >
+                    Show Preview
+                  </Button>
+                </div>
               </div>
 
-              <Button
-                className={
-                  "md:hidden hover:cursor-pointer hover:bg-gray-900 hover:text-white"
-                }
-                onClick={(e) => {
-                  e.preventDefault();
-                  setBackdrop(true);
-                }}
-                variant={"outline"}
-              >
-                Show Preview
-              </Button>
+              {step === 7 ? (
+                <div className="flex flex-row gap-3 mb-6">
+                  <Button
+                    variant={"outline"}
+                    className={
+                      "hover:bg-slate-900 hover:text-white hover:cursor-pointer flex-1"
+                    }
+                    onClick={(e) => {
+                      e.preventDefault();
+                      reactToPrintFn();
+                    }}
+                  >
+                    Print
+                  </Button>
+                  <Button
+                    disabled={downloading}
+                    variant={"outline"}
+                    className={
+                      "hover:bg-slate-900 hover:text-white hover:cursor-pointer flex-1"
+                    }
+                    onClick={(e) => {
+                      e.preventDefault();
+                      // generatePDF(resumeRef, { filename: "page.pdf" });
+                      const code = document.getElementById("resume-preview");
+                      downloadPDF(code.innerHTML);
+                    }}
+                  >
+                    {downloading ? "Working..." : "Download as PDF"}
+                  </Button>
+                </div>
+              ) : (
+                <></>
+              )}
             </div>
 
             {step === 1 && <PersonalForm />}
@@ -409,7 +556,9 @@ const ResumeForm = () => {
             <div className="flex gap-x-3 justify-between pt-4">
               {step > 1 && (
                 <Button
-                  className={"bg-gray-900 text-white flex-1"}
+                  className={
+                    "bg-gray-900 text-white flex-1 hover:cursor-pointer"
+                  }
                   type="button"
                   onClick={() => setStep((s) => s - 1)}
                 >
@@ -419,40 +568,50 @@ const ResumeForm = () => {
               {step < 7 ? (
                 <Button
                   type="button"
-                  className={"bg-gray-900 text-white flex-1"}
+                  className={
+                    "bg-gray-900 text-white flex-1 hover:cursor-pointer"
+                  }
                   onClick={async (e) => {
                     e.preventDefault();
                     const valid = await methods.trigger(stepKeys[step - 1]);
-                    if (valid) setStep((s) => s + 1);
+                    if (valid) {
+                      setStep((s) => s + 1);
+                    } else {
+                      toast.error("Please check all the errors");
+                    }
                   }}
                 >
                   Next
                 </Button>
               ) : (
                 <Button
-                  onClick={(e) => {
+                  onClick={async (e) => {
                     e.preventDefault();
+                    let allValid = true;
+
+                    for (const key of stepKeys) {
+                      const isValid = await methods.trigger(key);
+                      if (!isValid) {
+                        allValid = false;
+                      }
+                    }
+
+                    if (!allValid) {
+                      toast.error(
+                        "Errors exist in your form, please recheck all the errors"
+                      );
+                      return;
+                    }
                     showModal(true);
                   }}
-                  className={"bg-gray-900 text-white flex-1"}
+                  className={
+                    "bg-gray-900 text-white flex-1 hover:cursor-pointer"
+                  }
                 >
                   Submit
                 </Button>
               )}
             </div>
-            {step === 7 ? (
-              <Button
-                className={"bg-gray-900 text-white w-full mt-3"}
-                onClick={(e) => {
-                  e.preventDefault();
-                  reactToPrintFn();
-                }}
-              >
-                Print
-              </Button>
-            ) : (
-              <></>
-            )}
           </div>
 
           {backdrop && (
@@ -476,7 +635,7 @@ const ResumeForm = () => {
               This is what your resume will look like
             </div>
             <div className="md:w-[calc(210mm*0.7)] md:h-[calc(297mm*0.7)] max-md:w-[calc(210mm*0.44)] max-md:h-[calc(297mm*0.44)]">
-              <div className="w-[210mm] h-[297mm] md:scale-[0.7] max-md:scale-[0.44] origin-top-left">
+              <div className="w-[210mm] h-[297mm] md:scale-[0.7] max-md:scale-[0.44] origin-top-left outline-1">
                 <div id="resume-preview" ref={resumeRef}>
                   {type == "Modern" ? <ResumePreview2 /> : <ResumePreview />}
                 </div>

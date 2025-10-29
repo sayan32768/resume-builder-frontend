@@ -20,7 +20,7 @@ const Navbar2 = ({ user, handleLogout }) => {
               "hover:cursor-pointer hover:bg-gray-900 hover:text-white"
             }
             onClick={() => {
-              navigate("/home", { replace: true });
+              navigate("/home");
             }}
             variant={"outline"}
           >

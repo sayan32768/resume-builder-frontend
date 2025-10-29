@@ -32,8 +32,22 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/create" element={<ResumeForm />} />
-        <Route path="/edit/:resumeId" element={<ResumeForm />} />
+        <Route
+          path="/create"
+          element={
+            <ProtectedRoute>
+              <ResumeForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/edit/:resumeId"
+          element={
+            <ProtectedRoute>
+              <ResumeForm />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </>
   );

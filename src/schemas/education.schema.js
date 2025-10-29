@@ -7,8 +7,8 @@ export const educationFormSchema = z.object({
         .min(1, "Degree is required").default(""),
 
     dates: z.object({
-        startDate: z.date().optional(),
-        endDate: z.date().optional(),
+        startDate: z.date().optional().nullable(),
+        endDate: z.date().optional().nullable(),
     }).optional().refine((obj) => {
         if (!obj?.startDate || !obj?.endDate) return true;
         return (obj.startDate < obj.endDate)

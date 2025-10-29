@@ -7,13 +7,17 @@ const ProtectedRoute = ({ children }) => {
   //   console.log("------------------------------------------", user);
   if (loading)
     return (
-      //   <div className="w-screen h-screen flex items-center justify-center bg-gray-100">
-      //     <div className="flex flex-col items-center gap-4">
-      //       <div className="w-12 h-12 border-4 border-gray-800 border-t-transparent rounded-full animate-spin"></div>
-      //       <p className="text-gray-700 text-lg">Loading Data...</p>
-      //     </div>
-      //   </div>
-      <div className="text-3xl text-gray-400 w-[100vw] h-[100vh] flex flex-col justify-center text-center"></div>
+      <div className="w-full h-1 bg-gray-200 rounded overflow-hidden relative">
+        <div className="absolute top-0 left-0 h-1 w-1/3 bg-black animate-[loading_1.5s_linear_infinite]"></div>
+        <style>
+          {`
+        @keyframes loading {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+      `}
+        </style>
+      </div>
     );
   return <>{user ? children : <Navigate to={"/login"} replace={true} />}</>;
 };

@@ -18,7 +18,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/schemas/login.schema";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import axios from "axios";
 import { toast } from "sonner";
@@ -28,6 +28,8 @@ export function LoginForm({ className, ...props }) {
   const { user, setUser } = getData();
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+
+  const passwordRef = useRef(null);
 
   const changeVisibility = (e) => {
     e.preventDefault();
@@ -45,24 +47,17 @@ export function LoginForm({ className, ...props }) {
     mode: "onChange",
   });
 
-  // API CALLING HERE
   const onSubmit = async (data) => {
     console.log("Final Resume Data", data);
     setUser(null);
     try {
-      // await login({ email, password });
       const res = await axios.post("/user/login", data, {
         withCredentials: true,
         headers: {
           "Content-Type": "application/json",
         },
       });
-
-      // const res = await api.post("/user/login", { email, password });
-      console.log(res.data);
       if (res.data.success) {
-        console.log("AAAAAAAAAAAAAAAAAAAA");
-        console.log(res.data.data);
         setUser(res.data.data);
         toast.success(res.data.message);
         navigate("/home", { replace: true });
@@ -86,7 +81,19 @@ export function LoginForm({ className, ...props }) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && e.target.id === "email") {
+                e.preventDefault();
+                passwordRef.current?.focus();
+              }
+              if (e.key === "Enter" && e.target.id === "password") {
+                e.preventDefault();
+                handleSubmit(onSubmit)();
+              }
+            }}
+          >
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -109,15 +116,24 @@ export function LoginForm({ className, ...props }) {
 
                 <div className="relative">
                   <Input
-                    className={"bg-slate-300 border-0 border-slate-700"}
-                    {...register("password")}
                     id="password"
                     type={!showPassword ? "password" : "text"}
+                    {...register("password")}
+                    ref={(e) => {
+                      register("password").ref(e);
+                      passwordRef.current = e;
+                    }}
+                    className={"bg-slate-300 border-0 border-slate-700"}
                   />
 
                   <Button
-                    onClick={(e) => changeVisibility(e)}
-                    className={"absolute right-0 top-0 h-full px-3 py-2"}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      changeVisibility(e);
+                    }}
+                    className={
+                      "hover:cursor-pointer absolute right-0 top-0 h-full px-3 py-2"
+                    }
                   >
                     {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
                   </Button>
@@ -132,16 +148,13 @@ export function LoginForm({ className, ...props }) {
 
               <Field>
                 <Button
-                  className={"text-white bg-slate-900"}
+                  className={"text-white bg-slate-900 hover:cursor-pointer"}
                   variant="outline"
                   type="submit"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Working..." : "Login"}
                 </Button>
-                {/* <Button variant="outline" type="button">
-                  Login with Google
-                </Button> */}
                 <FieldDescription className="text-center">
                   Don&apos;t have an account? <Link to="/signup">Sign up</Link>
                 </FieldDescription>

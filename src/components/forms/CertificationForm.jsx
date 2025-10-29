@@ -97,11 +97,17 @@ const CertificationForm = () => {
 
           <Button
             variant={"outline"}
-            className={`w-full mt-1`}
+            className={`w-full mt-1 hover:bg-slate-900 hover:text-white hover:cursor-pointer`}
             onClick={() => remove(index)}
           >
             Remove Certification
           </Button>
+
+          <hr
+            className={`my-8 border-t border-gray-400 ${
+              fields.length === 1 ? "hidden" : "block"
+            }`}
+          />
         </div>
       ))}
 
@@ -110,8 +116,13 @@ const CertificationForm = () => {
       ) : (
         <Button
           variant={"outline"}
-          className={"w-full"}
-          onClick={() => append()}
+          className={
+            "w-full hover:bg-slate-900 hover:text-white hover:cursor-pointer"
+          }
+          onClick={(e) => {
+            e.preventDefault();
+            append();
+          }}
         >
           Add Certification
         </Button>

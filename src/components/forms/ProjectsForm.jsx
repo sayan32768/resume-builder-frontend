@@ -4,6 +4,7 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import AddButtonDotted from "../common/AddButtonDotted";
+import { Textarea } from "../ui/textarea";
 
 const LinksSection = ({ index }) => {
   const {
@@ -36,7 +37,7 @@ const LinksSection = ({ index }) => {
 
               <div className={`pl-2`}>
                 <Button
-                  className={"text-black"}
+                  className={"text-black hover:cursor-pointer"}
                   type="button"
                   variant="destructive"
                   size="icon"
@@ -58,7 +59,9 @@ const LinksSection = ({ index }) => {
       <Button
         type="button"
         variant={"outline"}
-        className={"w-full"}
+        className={
+          "w-full hover:bg-slate-900 hover:text-white hover:cursor-pointer"
+        }
         onClick={() => linkAppend({ link: "" })}
       >
         + Add Link
@@ -102,7 +105,7 @@ const ProjectsForm = () => {
                 Project Description <span className="text-red-900">*</span>
               </Label>
               <div className="flex flex-col gap-y-1">
-                <Input {...register(`projects.${index}.description`, {})} />
+                <Textarea {...register(`projects.${index}.description`, {})} />
                 {errors.projects?.[index]?.description && (
                   <p className="text-red-900">
                     {errors.projects?.[index]?.description?.message}
@@ -112,7 +115,7 @@ const ProjectsForm = () => {
 
               <Label>Extra Details</Label>
               <div className="flex flex-col gap-y-1">
-                <Input {...register(`projects.${index}.extraDetails`, {})} />
+                <Textarea {...register(`projects.${index}.extraDetails`, {})} />
                 {errors.projects?.[index]?.extraDetails && (
                   <p className="text-red-900">
                     {errors.projects?.[index]?.extraDetails?.message}
@@ -125,11 +128,19 @@ const ProjectsForm = () => {
               <Button
                 type="button"
                 variant={"outline"}
-                className={"w-full"}
+                className={
+                  "w-full hover:bg-slate-900 hover:text-white hover:cursor-pointer"
+                }
                 onClick={() => remove(index)}
               >
                 Remove Project
               </Button>
+
+              <hr
+                className={`my-8 border-t border-gray-400 ${
+                  fields.length === 1 ? "hidden" : "block"
+                }`}
+              />
             </div>
           </div>
         );
@@ -141,8 +152,11 @@ const ProjectsForm = () => {
         <Button
           type="button"
           variant={"outline"}
-          className={""}
-          onClick={() => append()}
+          className={"hover:bg-slate-900 hover:text-white hover:cursor-pointer"}
+          onClick={(e) => {
+            e.preventDefault();
+            append();
+          }}
         >
           + Add Project
         </Button>

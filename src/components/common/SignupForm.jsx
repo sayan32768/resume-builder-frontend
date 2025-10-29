@@ -16,10 +16,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signupSchema } from "@/schemas/signup.schema";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import axios from "axios";
 import { toast } from "sonner";
@@ -27,12 +26,12 @@ import { getData } from "@/contexts/UserContext";
 
 export function SignupForm({ className, ...props }) {
   const { user, setUser } = getData();
-
   const navigate = useNavigate();
-
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     useState(false);
+  const passwordRef = useRef(null);
+  const confirmPasswordRef = useRef(null);
 
   const changeVisibilityPassword = (e) => {
     e.preventDefault();
@@ -54,24 +53,16 @@ export function SignupForm({ className, ...props }) {
     mode: "onChange",
   });
 
-  // API CALLING HERE
   const onSubmit = async (data) => {
-    console.log("Final Resume Data", data);
     setUser(null);
     try {
-      // await login({ email, password });
       const res = await axios.post("/user/register", data, {
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
       });
-
       if (res.data.success) {
         toast.success(res.data.message);
         navigate("/verify");
       }
-
-      console.log(res.data);
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
@@ -90,13 +81,40 @@ export function SignupForm({ className, ...props }) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && e.target.id === "fullName") {
+                e.preventDefault();
+                document.getElementById("email")?.focus();
+              }
+
+              if (e.key === "Enter" && e.target.id === "email") {
+                e.preventDefault();
+                passwordRef.current?.focus();
+              }
+              if (e.key === "Enter" && e.target.id === "password") {
+                e.preventDefault();
+                confirmPasswordRef.current?.focus();
+              }
+              if (e.key === "Enter" && e.target.id === "confirmPassword") {
+                e.preventDefault();
+                handleSubmit(onSubmit)();
+              }
+            }}
+          >
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="fullName">Full Name</FieldLabel>
                 <Input
                   className={"bg-slate-300 border-0 border-slate-700"}
                   {...register("fullName")}
+                  onKeyDown={(e) => {
+                    const regex = /^[a-zA-Z\s]*$/;
+                    if (!regex.test(e.key) && e.key.length === 1) {
+                      e.preventDefault();
+                    }
+                  }}
                   id="fullName"
                   type="text"
                   placeholder="John Doe"
@@ -107,21 +125,27 @@ export function SignupForm({ className, ...props }) {
                   </p>
                 )}
               </Field>
-              <Field>
+              {/* <Field>
                 <FieldLabel htmlFor="username">Username</FieldLabel>
                 <Input
                   className={"bg-slate-300 border-0 border-slate-700"}
                   {...register("username")}
+                  onKeyDown={(e) => {
+                    const regex = /^[a-zA-Z0-9]*$/;
+                    if (!regex.test(e.key) && e.key.length === 1) {
+                      e.preventDefault();
+                    }
+                  }}
                   id="username"
                   type="text"
-                  placeholder="John Doe"
+                  placeholder="JohnDoe"
                 />
                 {errors.username && (
                   <p className="text-red-900 text-sm">
                     {errors.username?.message}
                   </p>
                 )}
-              </Field>
+              </Field> */}
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
@@ -143,14 +167,25 @@ export function SignupForm({ className, ...props }) {
                 <FieldLabel htmlFor="password">Password</FieldLabel>
                 <div className="relative">
                   <Input
-                    className={"bg-slate-300 border-0 border-slate-700"}
-                    {...register("password")}
                     id="password"
                     type={!isPasswordVisible ? "password" : "text"}
+                    className={"bg-slate-300 border-0 border-slate-700"}
+                    {...register("password")}
+                    onKeyDown={(e) => {
+                      if (e.key === " ") {
+                        e.preventDefault();
+                      }
+                    }}
+                    ref={(e) => {
+                      register("password").ref(e);
+                      passwordRef.current = e;
+                    }}
                   />
                   <Button
-                    onClick={(e) => changeVisibilityPassword(e)}
-                    className={"absolute right-0 top-0 h-full px-3 py-2"}
+                    onClick={changeVisibilityPassword}
+                    className={
+                      "absolute right-0 top-0 h-full px-3 py-2 hover:cursor-pointer"
+                    }
                   >
                     {isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}
                   </Button>
@@ -165,18 +200,22 @@ export function SignupForm({ className, ...props }) {
                 <FieldLabel htmlFor="confirmPassword">
                   Confirm Password
                 </FieldLabel>
-
                 <div className="relative">
                   <Input
-                    className={"bg-slate-300 border-0 border-slate-700"}
-                    {...register("confirmPassword")}
                     id="confirmPassword"
                     type={!isConfirmPasswordVisible ? "password" : "text"}
+                    className={"bg-slate-300 border-0 border-slate-700"}
+                    {...register("confirmPassword")}
+                    ref={(e) => {
+                      register("confirmPassword").ref(e);
+                      confirmPasswordRef.current = e;
+                    }}
                   />
-
                   {/* <Button
-                    onClick={(e) => changeVisibilityConfirmPassword(e)}
-                    className={"absolute right-0 top-0 h-full px-3 py-2"}
+                    onClick={changeVisibilityConfirmPassword}
+                    className={
+                      "absolute right-0 top-0 h-full px-3 py-2 hover:cursor-pointer"
+                    }
                   >
                     {isConfirmPasswordVisible ? (
                       <FaRegEye />
@@ -193,16 +232,13 @@ export function SignupForm({ className, ...props }) {
               </Field>
               <Field>
                 <Button
-                  className={"bg-slate-900 text-white"}
+                  className={"bg-slate-900 text-white hover:cursor-pointer"}
                   variant={"outline"}
                   type="submit"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Working..." : "Create Account"}
                 </Button>
-                {/* <Button variant="outline" type="button">
-                  Sign up with Google
-                </Button> */}
                 <FieldDescription className="px-6 text-center">
                   Already have an account? <Link to="/login">Sign in</Link>
                 </FieldDescription>

@@ -1,5 +1,6 @@
 import React from "react";
 import { useFormContext } from "react-hook-form";
+import { toast } from "sonner";
 
 const SlidingSidebar = ({ show, onClose, step, setStep }) => {
   const stepNames = [
@@ -43,20 +44,40 @@ const SlidingSidebar = ({ show, onClose, step, setStep }) => {
         <div className="p-4">
           {/* <h2 className="font-semibold text-lg mb-4 pl-2">Menu</h2> */}
           <ul className="space-y-3">
-            {stepNames.map((stepObj) => (
+            {stepNames.map((s) => (
               <li
-                key={stepObj.id}
+                key={s.id}
                 onClick={async (e) => {
                   e.preventDefault();
-                  const valid = await trigger(stepKeys[step - 1]);
-                  if (valid) setStep(stepObj.id);
+
+                  if (s.id <= step) {
+                    setStep(s.id);
+                    onClose();
+                    return;
+                  }
+
+                  let allValid = true;
+                  let id = s.id - 1;
+
+                  for (let i = 0; i < s.id; i++) {
+                    const isValid = await trigger(stepKeys[i]);
+                    console.log(id);
+                    if (!isValid) {
+                      toast.error("Please fill in all the necessary Details");
+                      allValid = false;
+                      id = i;
+                      break;
+                    }
+                  }
+
+                  setStep(id + 1);
                   onClose();
                 }}
                 className={`cursor-pointer p-2 rounded-md transition-colors duration-200 ${
-                  step === stepObj.id ? "bg-gray-200" : "hover:bg-gray-100"
+                  step === s.id ? "bg-gray-200" : "hover:bg-gray-100"
                 }`}
               >
-                {stepObj.title}
+                {s.title}
               </li>
             ))}
           </ul>

@@ -9,6 +9,7 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchUser = async () => {
+      // await new Promise((resolve) => setTimeout(resolve, 3000));
       try {
         const res = await api.get("/user/getUserDetails");
         if (res.data.success) {

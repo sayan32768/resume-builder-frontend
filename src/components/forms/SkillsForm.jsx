@@ -33,7 +33,7 @@ export const SkillsForm = () => {
                   {...register(`skills.${index}.skillName`, {})}
                 />
                 <Button
-                  className={"text-black"}
+                  className={"text-black hover:cursor-pointer"}
                   type="button"
                   variant="destructive"
                   size="icon"
@@ -61,10 +61,12 @@ export const SkillsForm = () => {
         <Button
           type="button"
           variant={"outline"}
-          className={"w-full"}
+          className={
+            "w-full hover:bg-slate-900 hover:text-white hover:cursor-pointer"
+          }
           onClick={() => append({ skillName: "" })}
         >
-          Add a skill
+          + Add a skill
         </Button>
       )}
     </div>

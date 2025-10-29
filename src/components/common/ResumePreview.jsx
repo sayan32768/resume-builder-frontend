@@ -14,11 +14,71 @@ const ResumePreview = () => {
   const skills = data?.skills || [];
 
   return (
-    <div className="text-gray-800 font-sans p-8 w-[210mm] h-[297mm] bg-white overflow-hidden outline-1">
-      <header className="border-b pb-4 mb-4">
-        <h1 className="text-2xl font-bold">
-          {personal?.fullName || "Your Name"}
-        </h1>
+    <div className="resume-preview">
+      <style>
+        {`
+         @import url('https://fonts.googleapis.com/css2?family=Crete+Round:ital@0;1&family=Lexend:wght@100..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Sanchez:ital@0;1&display=swap');
+          * {
+              font-family: "Nunito Sans", sans-serif;
+          }
+        .resume-preview {
+          color: #1f2937;
+          font-family: sans-serif;
+          padding: 32px;
+          width: 210mm;
+          height: 297mm;
+          background-color: white;
+          overflow: hidden;
+        }
+        .resume-preview header {
+          border-bottom: 1px solid #d1d5db;
+          padding-bottom: 16px;
+          margin-bottom: 16px;
+
+        }
+        .resume-preview header h1 {
+          font-size: 24px;
+          font-weight: 700;
+          margin: 0;
+          line-height: 1.4;
+        }
+
+        .resume-preview header p {
+          margin: 0;
+          line-height: 1.4;
+        }
+
+        .resume-preview section {
+          margin-bottom: 16px;
+        }
+        .resume-preview section h2 {
+          font-size: 20px;
+          font-weight: 600;
+          border-bottom: 1px solid #d1d5db;
+          margin-bottom: 8px;
+        }
+        .resume-preview div {
+          margin-bottom: 8px;
+        }
+        .resume-preview div p {
+          margin: 0;
+        }
+        .resume-preview div p.bold {
+          font-weight: 600;
+        }
+        .resume-preview ul {
+          list-style-type: disc;
+          padding-left: 16px;
+          margin: 0;
+        }
+        .resume-preview a {
+          color: #2563eb;
+          text-decoration: underline;
+        }
+        `}
+      </style>
+      <header>
+        <h1>{personal?.fullName || "Your Name"}</h1>
         <p>
           {personal?.email || "you@example.com"} |{" "}
           {personal?.phone || "+91 XXXXXXXXXX"}
@@ -38,18 +98,18 @@ const ResumePreview = () => {
       </header>
 
       {personal?.summary && (
-        <section className="mb-4">
-          <h2 className="text-xl font-semibold border-b mb-2">Summary</h2>
+        <section>
+          <h2>Summary</h2>
           <p>{personal.summary}</p>
         </section>
       )}
 
       {education?.length > 0 && (
-        <section className="mb-4">
-          <h2 className="text-xl font-semibold border-b mb-2">Education</h2>
+        <section>
+          <h2>Education</h2>
           {education.map((edu, i) => (
-            <div key={i} className="mb-2">
-              <p className="font-bold">{edu.degree || "Degree"}</p>
+            <div key={i}>
+              <p className="bold">{edu.degree || "Degree"}</p>
               <p>{edu.name || "Institute Name"}</p>
               {edu.dates?.startDate && edu.dates?.endDate && (
                 <p>
@@ -71,13 +131,11 @@ const ResumePreview = () => {
       )}
 
       {experience?.length > 0 && (
-        <section className="mb-4">
-          <h2 className="text-xl font-semibold border-b mb-2">
-            Professional Experience
-          </h2>
+        <section>
+          <h2>Professional Experience</h2>
           {experience.map((exp, i) => (
-            <div key={i} className="mb-2">
-              <p className="font-bold">{exp.position || "Position"}</p>
+            <div key={i}>
+              <p className="bold">{exp.position || "Position"}</p>
               <p>{exp.companyName || "Company Name"}</p>
               {exp.companyAddress && <p>{exp.companyAddress}</p>}
               {exp.dates?.startDate && exp.dates?.endDate && (
@@ -93,22 +151,21 @@ const ResumePreview = () => {
       )}
 
       {projects?.length > 0 && (
-        <section className="mb-4">
-          <h2 className="text-xl font-semibold border-b mb-2">Projects</h2>
+        <section>
+          <h2>Projects</h2>
           {projects.map((proj, i) => (
-            <div key={i} className="mb-2">
-              <p className="font-bold">{proj.title || "Project Title"}</p>
+            <div key={i}>
+              <p className="bold">{proj.title || "Project Title"}</p>
               {proj.description && <p>{proj.description}</p>}
               {proj.extraDetails && <p>{proj.extraDetails}</p>}
               {proj.links?.length > 0 && (
-                <ul className="list-disc pl-5">
+                <ul>
                   {proj.links.map((l, idx) => (
                     <li key={idx}>
                       <a
                         href={l.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 underline"
                       >
                         {l.link}
                       </a>
@@ -122,13 +179,11 @@ const ResumePreview = () => {
       )}
 
       {otherExp?.length > 0 && (
-        <section className="mb-4">
-          <h2 className="text-xl font-semibold border-b mb-2">
-            Other Experience
-          </h2>
+        <section>
+          <h2>Other Experience</h2>
           {otherExp.map((exp, i) => (
-            <div key={i} className="mb-2">
-              <p className="font-bold">
+            <div key={i}>
+              <p className="bold">
                 {exp.position || exp.companyName || "Title"}
               </p>
               {exp.companyAddress && <p>{exp.companyAddress}</p>}
@@ -145,13 +200,11 @@ const ResumePreview = () => {
       )}
 
       {certifications?.length > 0 && (
-        <section className="mb-4">
-          <h2 className="text-xl font-semibold border-b mb-2">
-            Certifications
-          </h2>
+        <section>
+          <h2>Certifications</h2>
           {certifications.map((cert, i) => (
-            <div key={i} className="mb-2">
-              <p className="font-bold">{cert.title || "Certificate Title"}</p>
+            <div key={i}>
+              <p className="bold">{cert.title || "Certificate Title"}</p>
               <p>{cert.issuingAuthority || "Issuing Authority"}</p>
               {cert.issueDate && (
                 <p>
@@ -160,12 +213,7 @@ const ResumePreview = () => {
                 </p>
               )}
               {cert.link && (
-                <a
-                  href={cert.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 underline"
-                >
+                <a href={cert.link} target="_blank" rel="noopener noreferrer">
                   {cert.link}
                 </a>
               )}
@@ -176,7 +224,7 @@ const ResumePreview = () => {
 
       {skills?.length > 0 && (
         <section>
-          <h2 className="text-xl font-semibold border-b mb-2">Skills</h2>
+          <h2>Skills</h2>
           <p>{skills.map((s) => s.skillName || "-").join(", ")}</p>
         </section>
       )}

@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { DatePicker } from "../common/DatePicker";
+import { Textarea } from "../ui/textarea";
 
 const EducationDetailsForm = () => {
   const {
@@ -90,7 +91,9 @@ const EducationDetailsForm = () => {
                       onValueChange={field.onChange}
                       value={field.value ?? ""}
                     >
-                      <SelectTrigger className={"shadow-none"}>
+                      <SelectTrigger
+                        className={"shadow-none hover:cursor-pointer"}
+                      >
                         <SelectValue placeholder="Select type" />
                       </SelectTrigger>
                       <SelectContent className={"bg-white rounded-sm border-0"}>
@@ -113,7 +116,7 @@ const EducationDetailsForm = () => {
           <Label htmlFor="message">Additional Info</Label>
 
           <div className="gap-y-1 flex flex-col">
-            <Input
+            <Textarea
               placeholder="Enter something..."
               {...register(`educationDetails.${index}.grades.message`, {})}
             />
@@ -160,7 +163,7 @@ const EducationDetailsForm = () => {
           <Label htmlFor="Location">Location</Label>
 
           <div className="gap-y-1 flex flex-col">
-            <Input
+            <Textarea
               placeholder="Enter Institution Address"
               {...register(`educationDetails.${index}.location`, {})}
             />
@@ -175,15 +178,30 @@ const EducationDetailsForm = () => {
             variant={"outline"}
             className={`w-full mt-1 ${
               fields.length === 1 ? "hidden" : "block"
-            }`}
+            } hover:bg-slate-900 hover:text-white hover:cursor-pointer`}
             onClick={() => remove(index)}
           >
             Remove Education
           </Button>
+
+          <hr
+            className={`my-8 border-t border-gray-400 ${
+              fields.length === 1 ? "hidden" : "block"
+            }`}
+          />
         </div>
       ))}
 
-      <Button variant={"outline"} className={"w-full"} onClick={() => append()}>
+      <Button
+        variant={"outline"}
+        className={
+          "w-full hover:bg-slate-900 hover:text-white hover:cursor-pointer"
+        }
+        onClick={(e) => {
+          e.preventDefault();
+          append();
+        }}
+      >
         Add Education
       </Button>
 

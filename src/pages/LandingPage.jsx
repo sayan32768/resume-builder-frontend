@@ -77,9 +77,9 @@ const LandingPage = () => {
   ];
 
   return (
-    <div className="lg:gap-y-18 md:gap-y-16 max-md:gap-y-10 flex flex-col items-center">
+    <div className="flex flex-col items-center">
       <Navbar2 />
-      <div className="w-full md:max-w-[80vw] max-md:px-6 flex flex-col lg:gap-y-18 md:gap-y-16 max-md:gap-y-10 pt-10">
+      <div className="w-full md:max-w-[80vw] max-md:px-6 flex flex-col lg:gap-y-18 md:gap-y-16 max-md:gap-y-10 pt-0">
         <div className="flex flex-row max-md:flex-col-reverse lg:gap-x-14 md:gap-x-10 max-md:gap-y-6 pt-0 items-center">
           <div className="flex-1 flex">
             <div className="w-full max-md:hidden">
@@ -144,8 +144,8 @@ const LandingPage = () => {
           ))}
         </div>
 
-        <div className="flex flex-col lg:gap-y-8 md:gap-y-6 max-md:gap-y-4 pt-2">
-          <h1 className="text-center lg:text-2xl md:text-2xl max-md:text-2xl">
+        <div className="flex flex-col lg:gap-y-8 md:gap-y-6 max-md:gap-y-4 pt-6">
+          <h1 className="text-center lg:text-2xl md:text-2xl max-md:text-xl font-bold px-6">
             We have got two options for you
           </h1>
 
@@ -178,8 +178,8 @@ const LandingPage = () => {
           </div>
         </div>
 
-        <div className="flex flex-col lg:gap-y-8 md:gap-y-6 max-md:gap-y-4 pt-2">
-          <h1 className="text-center lg:text-2xl md:text-2xl max-md:text-2xl">
+        <div className="flex flex-col lg:gap-y-8 md:gap-y-6 max-md:gap-y-4 pt-6">
+          <h1 className="text-center lg:text-2xl md:text-2xl max-md:text-xl font-bold px-6">
             What users say about Resume Builder
           </h1>
 
@@ -191,12 +191,15 @@ const LandingPage = () => {
               >
                 <div className="flex items-center gap-4 text-slate-800">
                   <img
-                    src={"https://avatar.iran.liara.run/public"}
+                    src={`https://ui-avatars.com/api/?name=${t.name.replace(
+                      " ",
+                      "+"
+                    )}&background=random&font-size=0.33`}
                     alt={t.name}
                     className="relative inline-block h-[58px] w-[58px] rounded-full object-cover object-center"
                   />
                   <div className="flex w-full flex-col">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-x-3 justify-between">
                       <h5 className="text-xl font-semibold text-slate-800">
                         {t.name}
                       </h5>
@@ -233,8 +236,8 @@ const LandingPage = () => {
           </div>
         </div>
 
-        <div className="flex flex-col lg:gap-y-8 md:gap-y-6 max-md:gap-y-4 pt-2">
-          <h1 className="text-left lg:text-2xl md:text-2xl max-md:text-2xl font-medium">
+        <div className="flex flex-col lg:gap-y-8 md:gap-y-6 max-md:gap-y-4 pt-6 mb-18">
+          <h1 className="text-left lg:text-2xl md:text-2xl max-md:text-xl font-bold">
             Our resumes got selected in
           </h1>
 

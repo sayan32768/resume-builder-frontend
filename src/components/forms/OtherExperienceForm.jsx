@@ -5,6 +5,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { DatePicker } from "../common/DatePicker";
 import AddButtonDotted from "../common/AddButtonDotted";
+import { Textarea } from "../ui/textarea";
 
 const OtherExperienceForm = () => {
   const {
@@ -48,7 +49,7 @@ const OtherExperienceForm = () => {
               <Label htmlFor="companyAddress">Organization Address</Label>
 
               <div className="gap-y-1 flex flex-col">
-                <Input
+                <Textarea
                   placeholder="Enter organization address"
                   {...register(`otherExperience.${index}.companyAddress`, {})}
                 />
@@ -116,7 +117,7 @@ const OtherExperienceForm = () => {
           <Label htmlFor="workDescription">Description</Label>
 
           <div className="gap-y-1 flex flex-col">
-            <Input
+            <Textarea
               placeholder="Description"
               {...register(`otherExperience.${index}.workDescription`, {})}
             />
@@ -129,24 +130,38 @@ const OtherExperienceForm = () => {
 
           <Button
             variant={"outline"}
-            className={`w-full mt-1`}
+            className={`w-full mt-1 hover:bg-slate-900 hover:text-white hover:cursor-pointer`}
             onClick={() => remove(index)}
           >
             Remove Experience
           </Button>
+
+          <hr
+            className={`my-8 border-t border-gray-400 ${
+              fields.length === 1 ? "hidden" : "block"
+            }`}
+          />
         </div>
       ))}
 
       {fields.length === 0 ? (
         <AddButtonDotted
-          onClick={() => append()}
+          onClick={(e) => {
+            e.preventDefault();
+            append();
+          }}
           text="+ Add Other Experience"
         />
       ) : (
         <Button
           variant={"outline"}
-          className={"w-full"}
-          onClick={() => append()}
+          className={
+            "w-full hover:bg-slate-900 hover:text-white hover:cursor-pointer"
+          }
+          onClick={(e) => {
+            e.preventDefault();
+            append();
+          }}
         >
           + Add Other Experience
         </Button>

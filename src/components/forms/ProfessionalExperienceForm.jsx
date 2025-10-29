@@ -5,6 +5,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { DatePicker } from "../common/DatePicker";
 import AddButtonDotted from "../common/AddButtonDotted";
+import { Textarea } from "../ui/textarea";
 
 const ProfessionalExperienceForm = () => {
   const {
@@ -54,7 +55,7 @@ const ProfessionalExperienceForm = () => {
               <Label htmlFor="companyAddress">Company Address</Label>
 
               <div className="gap-y-1 flex flex-col">
-                <Input
+                <Textarea
                   placeholder="Enter company address"
                   {...register(
                     `professionalExperience.${index}.companyAddress`,
@@ -128,7 +129,7 @@ const ProfessionalExperienceForm = () => {
           <Label htmlFor="workDescription">Work Description</Label>
 
           <div className="gap-y-1 flex flex-col">
-            <Input
+            <Textarea
               placeholder="Work Description"
               {...register(
                 `professionalExperience.${index}.workDescription`,
@@ -147,11 +148,17 @@ const ProfessionalExperienceForm = () => {
 
           <Button
             variant={"outline"}
-            className={`w-full mt-1`}
+            className={`w-full mt-1 hover:bg-slate-900 hover:text-white hover:cursor-pointer`}
             onClick={() => remove(index)}
           >
             Remove Experience
           </Button>
+
+          <hr
+            className={`my-8 border-t border-gray-400 ${
+              fields.length === 1 ? "hidden" : "block"
+            }`}
+          />
         </div>
       ))}
 
@@ -174,8 +181,13 @@ const ProfessionalExperienceForm = () => {
         // </Button>
         <Button
           variant={"outline"}
-          className={"w-full"}
-          onClick={() => append()}
+          className={
+            "w-full hover:bg-slate-900 hover:text-white hover:cursor-pointer"
+          }
+          onClick={(e) => {
+            e.preventDefault();
+            append();
+          }}
         >
           Add Work Experience
         </Button>

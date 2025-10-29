@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { Textarea } from "../ui/textarea";
 const PersonalForm = () => {
   const {
     control,
@@ -100,7 +101,7 @@ const PersonalForm = () => {
         <Label htmlFor="Address">Address</Label>
 
         <div className="gap-y-1 flex flex-col">
-          <Input
+          <Textarea
             placeholder="Enter your address"
             {...register("personalDetails.address", {})}
           />
@@ -114,7 +115,7 @@ const PersonalForm = () => {
         <Label htmlFor="About">About Me</Label>
 
         <div className="gap-y-1 flex flex-col">
-          <Input
+          <Textarea
             placeholder="Write something..."
             {...register("personalDetails.about", {})}
           />
@@ -157,7 +158,7 @@ const PersonalForm = () => {
 
                 <div className={`pl-2`}>
                   <Button
-                    className={"text-black"}
+                    className={"text-black hover:cursor-pointer"}
                     type="button"
                     variant="destructive"
                     size="icon"
@@ -182,7 +183,7 @@ const PersonalForm = () => {
         <Button
           type="button"
           variant={"outline"}
-          className={""}
+          className={"hover:cursor-pointer hover:bg-slate-900 hover:text-white"}
           onClick={() => append({ name: "LINKEDIN" })}
         >
           + Add Social

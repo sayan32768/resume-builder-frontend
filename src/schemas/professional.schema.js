@@ -5,8 +5,8 @@ export const experienceSchema = z.object({
     companyAddress: z.string().optional().default(""),
     position: z.string().optional().default(""),
     dates: z.object({
-        startDate: z.date().optional(),
-        endDate: z.date().optional(),
+        startDate: z.date().optional().nullable(),
+        endDate: z.date().optional().nullable(),
     }).optional().refine((obj) => {
         if (!obj?.startDate || !obj?.endDate) return true;
         return (obj.startDate < obj.endDate)
