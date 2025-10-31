@@ -35,6 +35,7 @@ export function DatePicker({ field }) {
       >
         <div className="flex flex-col">
           <Calendar
+            endMonth={new Date(2050, 12)}
             key={field.value ? field.value.toString() : "no-date"}
             mode="single"
             selected={field.value}

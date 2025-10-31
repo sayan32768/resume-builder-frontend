@@ -16,13 +16,9 @@ const ResumePreview2 = () => {
   return (
     <div className="resume-preview">
       <style>
-        {`
-         @import url('https://fonts.googleapis.com/css2?family=Crete+Round:ital@0;1&family=Lexend:wght@100..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Sanchez:ital@0;1&display=swap');
-          * {
-              font-family: "Nunito Sans", sans-serif;
-          }
+        {`         
           .resume-preview {
-          font-family: sans-serif;
+          font-family: "Nunito Sans", serif;
           width: 210mm;
           height: 297mm;
           background-color: white;
@@ -164,21 +160,17 @@ const ResumePreview2 = () => {
               <h3>education</h3>
               {education.map((edu, i) => (
                 <div key={i}>
-                  {edu.dates?.startDate && edu.dates?.endDate && (
-                    <p className="italic">
-                      ({new Date(edu.dates.startDate).getFullYear()} -{" "}
-                      {new Date(edu.dates.endDate).getFullYear()})
-                    </p>
-                  )}
-                  <p className="bold">{edu.degree || "-"}</p>
-                  {edu.name && <p className="italic">{edu.name}</p>}
-                  {edu.location && <p>{edu.location}</p>}
-                  {edu.grades?.score && (
-                    <p>
-                      {edu.grades.type}: {edu.grades.score}{" "}
-                      {edu.grades.message && `(${edu.grades.message})`}
-                    </p>
-                  )}
+                  {edu.dates?.startDate && edu.dates?.endDate
+                    ? `${new Date(
+                        edu.dates.startDate
+                      ).getFullYear()} - ${new Date(
+                        edu.dates.endDate
+                      ).getFullYear()}`
+                    : edu.dates?.startDate
+                    ? new Date(edu.dates.startDate).getFullYear() + "- Present"
+                    : edu.dates?.endDate
+                    ? "End Date-" + new Date(edu.dates.endDate).getFullYear()
+                    : ""}
                 </div>
               ))}
             </section>
@@ -230,12 +222,17 @@ const ResumePreview2 = () => {
             <h2>professional experience</h2>
             {experience.map((exp, i) => (
               <div key={i}>
-                {exp.dates?.startDate && exp.dates?.endDate && (
-                  <p className="semibold">
-                    ({new Date(exp.dates.startDate).toLocaleDateString()} -{" "}
-                    {new Date(exp.dates.endDate).toLocaleDateString()})
-                  </p>
-                )}
+                {exp.dates?.startDate && exp.dates?.endDate
+                  ? `${new Date(
+                      exp.dates.startDate
+                    ).getFullYear()} - ${new Date(
+                      exp.dates.endDate
+                    ).getFullYear()}`
+                  : exp.dates?.startDate
+                  ? new Date(exp.dates.startDate).getFullYear() + "- Present"
+                  : exp.dates?.endDate
+                  ? "End Date-" + new Date(exp.dates.endDate).getFullYear()
+                  : ""}
                 <p className="bold">{exp.position || "-"}</p>
                 <p className="italic">
                   {exp.companyName || "-"}{" "}
@@ -284,12 +281,17 @@ const ResumePreview2 = () => {
             <h2>other experience</h2>
             {otherExp.map((exp, i) => (
               <div key={i}>
-                {exp.dates?.startDate && exp.dates?.endDate && (
-                  <p className="semibold">
-                    ({new Date(exp.dates.startDate).toLocaleDateString()} -{" "}
-                    {new Date(exp.dates.endDate).toLocaleDateString()})
-                  </p>
-                )}
+                {exp.dates?.startDate && exp.dates?.endDate
+                  ? `${new Date(
+                      exp.dates.startDate
+                    ).getFullYear()} - ${new Date(
+                      exp.dates.endDate
+                    ).getFullYear()}`
+                  : exp.dates?.startDate
+                  ? new Date(exp.dates.startDate).getFullYear() + "- Present"
+                  : exp.dates?.endDate
+                  ? "End Date-" + new Date(exp.dates.endDate).getFullYear()
+                  : ""}
                 <p className="bold">{exp.position || "-"}</p>
                 <p className="italic">
                   {exp.companyName || "-"}{" "}

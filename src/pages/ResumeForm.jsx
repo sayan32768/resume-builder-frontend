@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useRef, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm, useWatch } from "react-hook-form";
 import PersonalForm from "../components/forms/PersonalForm";
 import EducationDetailsForm from "../components/forms/EducationDetailsForm";
 import { resumeSchema } from "@/schemas/resume.schema";
@@ -11,25 +11,22 @@ import ProjectsForm from "../components/forms/ProjectsForm";
 import OtherExperienceForm from "../components/forms/OtherExperienceForm";
 import CertificationForm from "../components/forms/CertificationForm";
 import { useReactToPrint } from "react-to-print";
-import ResumePreview from "../components/common/ResumePreview";
-import {
-  replace,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
 import { ArrowLeft, Cross, MenuIcon, X } from "lucide-react";
 import SlidingSidebar from "@/components/common/SlidingSidebar";
 import ResumePreview2 from "@/components/common/ResumePreview2";
-import Navbar from "@/components/common/Navbar";
-import { FaBackward } from "react-icons/fa";
 import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-dropdown-menu";
-import generatePDF from "react-to-pdf";
 import { getData } from "@/contexts/UserContext";
 import { v4 as uuidv4 } from "uuid";
+import ResumePreview4 from "@/components/common/ResumePreview4";
+import ResumePDFStatic from "@/components/common/ResumePDFClassic";
+import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
+import ResumePDFModern from "@/components/common/ResumePDFModern";
+import ResumePDFClassic from "@/components/common/ResumePDFClassic";
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 const ResumeForm = () => {
@@ -124,6 +121,10 @@ const ResumeForm = () => {
     resolver: zodResolver(resumeSchema),
     defaultValues: resumeSchema.parse({}),
     mode: "onChange",
+  });
+
+  const formData = useWatch({
+    control: methods.control,
   });
 
   const [loading, setLoading] = useState(false);
@@ -276,6 +277,12 @@ const ResumeForm = () => {
       }
     }
   }, [resumeId, methods]);
+
+  const count = useRef(0);
+
+  useEffect(() => {
+    count.current++;
+  }, [formData]);
 
   const [modal, showModal] = useState(false);
 
@@ -517,20 +524,20 @@ const ResumeForm = () => {
                 </div>
               </div>
 
-              {step === 7 ? (
-                <div className="flex flex-row gap-3 mb-6">
-                  <Button
-                    variant={"outline"}
-                    className={
-                      "hover:bg-slate-900 hover:text-white hover:cursor-pointer flex-1"
-                    }
-                    onClick={(e) => {
-                      e.preventDefault();
-                      reactToPrintFn();
-                    }}
-                  >
-                    Print
-                  </Button>
+              <div className="flex flex-row gap-3 mb-6">
+                <Button
+                  variant={"outline"}
+                  className={
+                    "hover:bg-slate-900 hover:text-white hover:cursor-pointer flex-1"
+                  }
+                  onClick={(e) => {
+                    e.preventDefault();
+                    reactToPrintFn();
+                  }}
+                >
+                  Print
+                </Button>
+                <div className="flex flex-col gap-y-3 flex-1">
                   <Button
                     disabled={downloading}
                     variant={"outline"}
@@ -546,10 +553,33 @@ const ResumeForm = () => {
                   >
                     {downloading ? "Working..." : "Download as PDF"}
                   </Button>
+
+                  {/*REACT PDF INTERGATION NOT WORKING*/}
+                  {/* <PDFDownloadLink
+                    key={count.current}
+                    document={
+                      type === "Classic" ? (
+                        <ResumePDFClassic data={formData} />
+                      ) : (
+                        <ResumePDFModern data={formData} />
+                      )
+                    }
+                    fileName={`sayan-resume-${uuidv4()}.pdf`}
+                  >
+                    {({ loading }) => (
+                      <Button
+                        type="button"
+                        variant={"outline"}
+                        className={
+                          "hover:bg-slate-900 hover:text-white hover:cursor-pointer flex-1 w-full"
+                        }
+                      >
+                        {"Download V2"}
+                      </Button>
+                    )}
+                  </PDFDownloadLink> */}
                 </div>
-              ) : (
-                <></>
-              )}
+              </div>
             </div>
 
             {step === 1 && <PersonalForm />}
@@ -644,7 +674,7 @@ const ResumeForm = () => {
             <div className="md:w-[calc(210mm*0.7)] md:h-[calc(297mm*0.7)] max-md:w-[calc(210mm*0.44)] max-md:h-[calc(297mm*0.44)]">
               <div className="w-[210mm] h-[297mm] md:scale-[0.7] max-md:scale-[0.44] origin-top-left outline-1">
                 <div id="resume-preview" ref={resumeRef}>
-                  {type == "Modern" ? <ResumePreview2 /> : <ResumePreview />}
+                  {type === "Modern" ? <ResumePreview2 /> : <ResumePreview4 />}
                 </div>
               </div>
             </div>

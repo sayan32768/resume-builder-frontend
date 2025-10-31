@@ -2,7 +2,20 @@ import { z } from "zod";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 
 export const personalFormSchema = z.object({
-    fullName: z.string().min(1, "Name is required").default(""),
+    fullName: z
+        .string()
+        .default("")
+        .transform((v) =>
+            v
+                .trim()
+                .replace(/\s+/g, " ")
+                .replace(/\b\w/g, (c) => c.toUpperCase())
+        )
+        .refine((v) => v.length > 0, { message: "Name is required" })
+        .refine((v) => /^[a-zA-Z\s]+$/.test(v), {
+            message: "Only letters and spaces are allowed",
+        }),
+
     email: z
         .string()
         .min(1, "Email is required")

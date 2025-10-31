@@ -17,13 +17,9 @@ const ResumePreview = () => {
     <div className="resume-preview">
       <style>
         {`
-         @import url('https://fonts.googleapis.com/css2?family=Crete+Round:ital@0;1&family=Lexend:wght@100..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Sanchez:ital@0;1&display=swap');
-          * {
-              font-family: "Nunito Sans", sans-serif;
-          }
         .resume-preview {
           color: #1f2937;
-          font-family: sans-serif;
+          font-family: "Nunito Sans", serif;
           padding: 32px;
           width: 210mm;
           height: 297mm;

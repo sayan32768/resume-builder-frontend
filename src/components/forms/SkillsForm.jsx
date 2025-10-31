@@ -17,6 +17,15 @@ export const SkillsForm = () => {
     name: "skills",
   });
 
+  const handleKeyDown = (e, index) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (e.currentTarget.value.trim() !== "") {
+        append({ skillName: "" });
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col gap-y-3">
       {fields.map((obj, index) => (
@@ -31,6 +40,7 @@ export const SkillsForm = () => {
                 <Input
                   placeholder="Enter a skill"
                   {...register(`skills.${index}.skillName`, {})}
+                  onKeyDown={(e) => handleKeyDown(e, index)}
                 />
                 <Button
                   className={"text-black hover:cursor-pointer"}
