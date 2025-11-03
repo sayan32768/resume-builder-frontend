@@ -33,6 +33,11 @@ const LinksSection = ({ index }) => {
               <Input
                 placeholder={`Project Link ${idx + 1}`}
                 {...register(`projects.${index}.links.${idx}.link`, {})}
+                onKeyDown={(e) => {
+                  if (e.key === " ") {
+                    e.preventDefault();
+                  }
+                }}
               />
 
               <div className={`pl-2`}>
@@ -89,9 +94,7 @@ const ProjectsForm = () => {
           <div key={obj.id}>
             <h1 className="text-xl mb-3">Project {index + 1} Details</h1>
             <div className="flex flex-col gap-y-3 rounded-2xl">
-              <Label>
-                Project Title <span className="text-red-900">*</span>
-              </Label>
+              <Label>Project Title</Label>
               <div className="flex flex-col gap-y-1">
                 <Input {...register(`projects.${index}.title`, {})} />
                 {errors.projects?.[index]?.title && (
@@ -101,9 +104,7 @@ const ProjectsForm = () => {
                 )}
               </div>
 
-              <Label>
-                Project Description <span className="text-red-900">*</span>
-              </Label>
+              <Label>Project Description</Label>
               <div className="flex flex-col gap-y-1">
                 <Textarea {...register(`projects.${index}.description`, {})} />
                 {errors.projects?.[index]?.description && (

@@ -82,16 +82,12 @@ const Home = () => {
 
   const deleteResume = async (id) => {
     try {
-      const res = await axios.delete(
-        `${API_BASE_URL}/resume/delete/${id}`,
-        {},
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const res = await axios.delete(`${API_BASE_URL}/resume/delete/${id}`, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       if (res.data.success) {
         const updatedResumes = pastResumes.filter(
@@ -103,6 +99,7 @@ const Home = () => {
         toast.error("Could not delete resume");
       }
     } catch (error) {
+      console.log(error);
       toast.error("Could not delete resume");
     }
   };
@@ -120,7 +117,7 @@ const Home = () => {
           <div className="flex max-md:flex-col md:flex-row justify-center items-center gap-x-4 gap-y-6">
             <div className="flex flex-col gap-y-3">
               <div
-                onClick={() => navigate(`/create?type=Modern`)}
+                onClick={() => navigate("/create?type=Modern")}
                 className="hover:cursor-pointer rounded-[8px] relative group md:mx-2 max-md:my-2 w-[250px] aspect-[8.5/11] border-1 border-slate-500 overflow-hidden transition-all duration-300 p-[0px]"
               >
                 <img
@@ -140,7 +137,7 @@ const Home = () => {
 
             <div className="flex flex-col gap-y-3">
               <div
-                onClick={() => navigate(`/create?type=Classic`)}
+                onClick={() => navigate("/create?type=Classic")}
                 className="rounded-[8px] hover:cursor-pointer relative group md:mx-2 max-md:my-2 w-[250px] aspect-[8.5/11] border-1 border-slate-500 overflow-hidden transition-all duration-300 p-[0px]"
               >
                 <img

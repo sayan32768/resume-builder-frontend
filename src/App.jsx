@@ -9,6 +9,7 @@ import SignupPage from "./pages/SignupPage";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import VerifyEmail from "./pages/VerifyEmail";
 import Verify from "./pages/Verify";
+import ResumeCreator from "./pages/ResumeCreator";
 
 function App() {
   return (
@@ -32,19 +33,28 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
+        {/* <Route
           path="/create"
           element={
             <ProtectedRoute>
               <ResumeForm />
             </ProtectedRoute>
           }
-        />
+        /> */}
         <Route
           path="/edit/:resumeId"
           element={
             <ProtectedRoute>
               <ResumeForm />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/create"
+          element={
+            <ProtectedRoute>
+              <ResumeCreator />
             </ProtectedRoute>
           }
         />

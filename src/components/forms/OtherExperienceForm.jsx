@@ -27,9 +27,7 @@ const OtherExperienceForm = () => {
 
           <div className="flex md:flex-row max-md:flex-col gap-3">
             <div className="flex flex-col gap-3 flex-1">
-              <Label htmlFor="companyName">
-                Organization Name <span className="text-red-900">*</span>
-              </Label>
+              <Label htmlFor="companyName">Organization Name</Label>
 
               <div className="gap-y-1 flex flex-col">
                 <Input

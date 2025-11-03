@@ -51,9 +51,7 @@ const EducationDetailsForm = () => {
             </div>
 
             <div className="flex flex-col gap-3 flex-1">
-              <Label htmlFor="degree">
-                Degree <span className="text-red-900">*</span>
-              </Label>
+              <Label htmlFor="degree">Degree</Label>
 
               <div className="gap-y-1 flex flex-col">
                 <Input

@@ -16,9 +16,13 @@ const ResumePreview2 = () => {
   return (
     <div className="resume-preview">
       <style>
-        {`         
-          .resume-preview {
-          font-family: "Nunito Sans", serif;
+        {`
+        @import url('https://fonts.googleapis.com/css2?family=Crete+Round:ital@0;1&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Sanchez:ital@0;1&display=swap');         
+        .resume-preview * {
+           font-family: "Nunito Sans", serif !important;
+        }  
+        
+        .resume-preview {
           width: 210mm;
           height: 297mm;
           background-color: white;
@@ -89,7 +93,7 @@ const ResumePreview2 = () => {
           margin: 0;
         }
         .right-column header p {
-          text-align: center;
+          text-align: left;
           font-size: 12px;
           letter-spacing: 0.3em;
           color: #4b5563;
@@ -156,25 +160,57 @@ const ResumePreview2 = () => {
             </section>
           )}
           {education.length > 0 && (
-            <section>
-              <h3>education</h3>
+            <section className="flex flex-col gap-2">
+              <h3 className="font-semibold text-lg text-slate-800 mb-2">
+                Education
+              </h3>
+
               {education.map((edu, i) => (
-                <div key={i}>
-                  {edu.dates?.startDate && edu.dates?.endDate
-                    ? `${new Date(
-                        edu.dates.startDate
-                      ).getFullYear()} - ${new Date(
-                        edu.dates.endDate
-                      ).getFullYear()}`
-                    : edu.dates?.startDate
-                    ? new Date(edu.dates.startDate).getFullYear() + "- Present"
-                    : edu.dates?.endDate
-                    ? "End Date-" + new Date(edu.dates.endDate).getFullYear()
-                    : ""}
+                <div key={i} className="">
+                  {(edu.degree || edu.name) && (
+                    <p className="text-slate-900 font-medium">
+                      {edu.degree ? edu.degree : ""}
+                      {edu.degree && edu.name ? " • " : ""}
+                      {edu.name ? edu.name : ""}
+                    </p>
+                  )}
+
+                  {edu.location && (
+                    <p className="text-slate-600 text-sm italic">
+                      {edu.location}
+                    </p>
+                  )}
+
+                  {(edu.dates?.startDate || edu.dates?.endDate) && (
+                    <p className="text-slate-700 text-sm">
+                      {edu.dates?.startDate && edu.dates?.endDate
+                        ? `${new Date(
+                            edu.dates.startDate
+                          ).getFullYear()} - ${new Date(
+                            edu.dates.endDate
+                          ).getFullYear()}`
+                        : edu.dates?.startDate
+                        ? `${new Date(
+                            edu.dates.startDate
+                          ).getFullYear()} - Present`
+                        : edu.dates?.endDate
+                        ? `Ended ${new Date(edu.dates.endDate).getFullYear()}`
+                        : ""}
+                    </p>
+                  )}
+
+                  {edu.grades?.score && edu.grades?.type && (
+                    <p className="text-slate-700 text-sm">
+                      {edu.grades.type === "CGPA"
+                        ? `CGPA: ${edu.grades.score}`
+                        : `Percentage: ${edu.grades.score}%`}
+                    </p>
+                  )}
                 </div>
               ))}
             </section>
           )}
+
           {skills.length > 0 && (
             <section>
               <h3>key skills</h3>

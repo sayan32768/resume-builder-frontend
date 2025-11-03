@@ -12,10 +12,10 @@ import OtherExperienceForm from "../components/forms/OtherExperienceForm";
 import CertificationForm from "../components/forms/CertificationForm";
 import { useReactToPrint } from "react-to-print";
 
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
-import { ArrowLeft, Cross, MenuIcon, X } from "lucide-react";
+import { ArrowLeft, MenuIcon, X } from "lucide-react";
 import SlidingSidebar from "@/components/common/SlidingSidebar";
 import ResumePreview2 from "@/components/common/ResumePreview2";
 import { Input } from "@/components/ui/input";
@@ -23,18 +23,14 @@ import { Label } from "@radix-ui/react-dropdown-menu";
 import { getData } from "@/contexts/UserContext";
 import { v4 as uuidv4 } from "uuid";
 import ResumePreview4 from "@/components/common/ResumePreview4";
-import ResumePDFStatic from "@/components/common/ResumePDFClassic";
-import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
-import ResumePDFModern from "@/components/common/ResumePDFModern";
-import ResumePDFClassic from "@/components/common/ResumePDFClassic";
+import { FaExclamation } from "react-icons/fa";
+// import ResumePDFStatic from "@/components/common/ResumePDFClassic";
+// import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
+// import ResumePDFModern from "@/components/common/ResumePDFModern";
+// import ResumePDFClassic from "@/components/common/ResumePDFClassic";
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 const ResumeForm = () => {
-  // localStorage.removeItem(
-  //   "resume_draft",
-  //   JSON.stringify(localStorage.getItem("resume_draft"))
-  // );
-
   const [backdrop, setBackdrop] = useState(false);
 
   const stepNames = [
@@ -61,17 +57,13 @@ const ResumeForm = () => {
 
   const [step, setStep] = useState(1);
 
-  const types = ["Classic", "Modern"];
-
   const { resumeId } = useParams();
 
   const navigate = useNavigate();
 
   const resumeRef = useRef(null);
 
-  const [searchParams] = useSearchParams();
-
-  const [type, setType] = useState(searchParams.get("type"));
+  const [type, setType] = useState("Modern");
 
   const [showSidebar, setShowSidebar] = useState(false);
 
@@ -87,6 +79,23 @@ const ResumeForm = () => {
   const downloadPDF = async (htmlContent) => {
     setDownloadLoading(true);
     try {
+      // const res = await axios.put(
+      //   `${API_BASE_URL}/resume/${resumeId}`,
+      //   methods.getValues(),
+      //   {
+      //     withCredentials: true,
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //   }
+      // );
+
+      // if (res.status !== 200) {
+      //   setDownloadLoading(false);
+      //   toast.error("Error generating PDF");
+      //   return;
+      // }
+
       const response = await fetch(`${API_BASE_URL}/resume/download`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -109,6 +118,7 @@ const ResumeForm = () => {
         .toLowerCase()}-resume-${uuidv4()}.pdf`;
       a.click();
       window.URL.revokeObjectURL(url);
+      // setIsEditing(false);
     } catch (error) {
       setDownloadLoading(false);
       toast.error("Error generating PDF");
@@ -123,15 +133,16 @@ const ResumeForm = () => {
     mode: "onChange",
   });
 
-  const formData = useWatch({
-    control: methods.control,
-  });
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleFirstKey = () => {
+    if (!isEditing) setIsEditing(true);
+  };
 
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState(false);
 
   useEffect(() => {
-    if (!resumeId) return;
-
     const fetchResume = async () => {
       setLoading(true);
 
@@ -141,10 +152,15 @@ const ResumeForm = () => {
         });
         if (res.data.success) {
           setLoading(false);
-          setType(res.data.data.resumeType);
-          const { resumeType, ...newData } = res.data.data;
 
-          const parsed = newData;
+          if (!["Modern", "Classic"].includes(res.data.data.resumeType)) {
+            setErrors(true);
+            return;
+          }
+
+          setType(res.data.data.resumeType);
+
+          const parsed = res.data.data;
 
           if (
             parsed.professionalExperience &&
@@ -196,10 +212,12 @@ const ResumeForm = () => {
           methods.reset(parsed);
         } else {
           setLoading(false);
+          setErrors(true);
           toast.error("Failed to fetch resume");
         }
       } catch (err) {
         setLoading(false);
+        setErrors(true);
         toast.error("Failed to fetch resume");
       } finally {
         setLoading(false);
@@ -209,87 +227,22 @@ const ResumeForm = () => {
     fetchResume();
   }, [resumeId]);
 
-  useEffect(() => {
-    const subscription = methods.watch((value) => {
-      if (!resumeId) {
-        localStorage.setItem("resume_draft", JSON.stringify(value));
-      }
-    });
+  //  const formData = useWatch({
+  //   control: methods.control,
+  // });
 
-    return () => subscription.unsubscribe();
-  }, [methods, resumeId]);
+  // const count = useRef(0);
 
-  useEffect(() => {
-    if (resumeId) return;
-
-    const savedData = localStorage.getItem("resume_draft");
-    if (savedData) {
-      try {
-        const parsed = JSON.parse(savedData);
-
-        if (
-          parsed.professionalExperience &&
-          Array.isArray(parsed.professionalExperience)
-        ) {
-          parsed.professionalExperience.forEach((exp) => {
-            if (exp.dates?.startDate) {
-              exp.dates.startDate = new Date(exp.dates.startDate);
-            }
-            if (exp.dates?.endDate) {
-              exp.dates.endDate = new Date(exp.dates.endDate);
-            }
-          });
-        }
-
-        if (parsed.otherExperience && Array.isArray(parsed.otherExperience)) {
-          parsed.otherExperience.forEach((exp) => {
-            if (exp.dates?.startDate) {
-              exp.dates.startDate = new Date(exp.dates.startDate);
-            }
-            if (exp.dates?.endDate) {
-              exp.dates.endDate = new Date(exp.dates.endDate);
-            }
-          });
-        }
-
-        if (parsed.educationDetails && Array.isArray(parsed.educationDetails)) {
-          parsed.educationDetails.forEach((edu) => {
-            if (edu.dates?.startDate) {
-              edu.dates.startDate = new Date(edu.dates.startDate);
-            }
-            if (edu.dates?.endDate) {
-              edu.dates.endDate = new Date(edu.dates.endDate);
-            }
-          });
-        }
-
-        if (parsed.certifications && Array.isArray(parsed.certifications)) {
-          parsed.certifications.forEach((cert) => {
-            if (cert.issueDate) {
-              cert.issueDate = new Date(cert.issueDate);
-            }
-          });
-        }
-
-        methods.reset(parsed);
-      } catch (err) {
-        console.error("Failed to load draft:", err);
-      }
-    }
-  }, [resumeId, methods]);
-
-  const count = useRef(0);
-
-  useEffect(() => {
-    count.current++;
-  }, [formData]);
+  // useEffect(() => {
+  //   count.current++;
+  // }, [formData]);
 
   const [modal, showModal] = useState(false);
-
-  const showNameModal = () => {};
+  const [submitting, setIsSubmitting] = useState(false);
 
   const onSubmit = async (data) => {
     let allValid = true;
+    setIsSubmitting(true);
 
     for (const key of stepKeys) {
       const isValid = await methods.trigger(key);
@@ -299,53 +252,43 @@ const ResumeForm = () => {
     }
 
     if (!allValid) {
+      setIsSubmitting(false);
       toast.error("Errors exist in your form, please recheck all the errors");
       return;
     }
 
-    data = { ...data, resumeType: type };
+    if (!(await methods.trigger("resumeTitle"))) {
+      setIsSubmitting(false);
+      return;
+    }
+
     console.log("Final Resume Data", data);
 
+    var res;
+
+    // await new Promise((resolve) => setTimeout(resolve, 3000));
+
     try {
-      if (!resumeId) {
-        const res = await axios.post(`${API_BASE_URL}/resume/create`, data, {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        if (res.data.success) {
-          localStorage.removeItem("resume_draft");
-          navigate("/home", { replace: true });
-          toast.success("Successfully created resume");
-        } else {
-          toast.error("Some error occurrred, try again");
-        }
+      res = await axios.put(`${API_BASE_URL}/resume/${resumeId}`, data, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (res.data.success) {
+        toast.success("Changes saved successfully");
+        setIsEditing(false);
       } else {
-        console.log(data);
-        const res = await axios.put(
-          `${API_BASE_URL}/resume/${resumeId}`,
-          data,
-          {
-            withCredentials: true,
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        if (res.data.success) {
-          localStorage.removeItem("resume_draft");
-          navigate("/home", { replace: true });
-          toast.success("Successfully updated resume");
-        } else {
-          toast.error("Some error occurrred, try again");
-        }
+        toast.error("Some error occurrred, try again");
       }
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
           "Something went wrong, please try again."
       );
+    } finally {
+      setIsSubmitting(false);
+      return res?.data?.success;
     }
   };
 
@@ -365,13 +308,14 @@ const ResumeForm = () => {
     );
   }
 
-  if (!types.includes(type))
+  if (errors) {
     return (
       <div className="border-1 p-10 m-10 text-center rounded-xl border-slate-400 bg-slate-300 text-slate-800 flex flex-col items-center gap-y-6">
         <X />
-        <p>Error Occurred</p>
+        <p>{"Error occurred while fething details!"}</p>
       </div>
     );
+  }
 
   return (
     <FormProvider {...methods}>
@@ -382,7 +326,10 @@ const ResumeForm = () => {
         onClose={() => setShowSidebar(false)}
       />
 
-      <form onSubmit={methods.handleSubmit(onSubmit)}>
+      <form
+        onSubmit={methods.handleSubmit(onSubmit)}
+        onKeyDown={handleFirstKey}
+      >
         {modal && (
           <div
             onClick={() => showModal(false)}
@@ -407,11 +354,19 @@ const ResumeForm = () => {
               </div>
 
               <Button
-                type="submit"
-                disabled={methods.formState.isSubmitting}
+                // type="submit"
+                onClick={async (e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const res = await onSubmit(methods.getValues());
+                  if (res) {
+                    showModal(false);
+                  }
+                }}
+                disabled={submitting}
                 className="bg-gray-900 text-white flex-1 hover:cursor-pointer"
               >
-                {methods.formState.isSubmitting ? "Submitting..." : "Submit"}
+                {submitting ? "Saving..." : "Save"}
               </Button>
             </div>
           </div>
@@ -498,6 +453,52 @@ const ResumeForm = () => {
                 <div>Go back to home</div>
               </div>
             </div>
+
+            <div className="flex flex-col gap-1 mb-6 ml-3">
+              <h1
+                className={`text-2xl font-semibold ${
+                  methods.getValues()?.resumeTitle
+                    ? "text-slate-900"
+                    : "text-slate-600 italic"
+                }`}
+                title={methods.getValues()?.resumeTitle || "Untitled"}
+              >
+                {methods.getValues()?.resumeTitle || "Untitled"}
+              </h1>
+              <p className="text-sm text-slate-500">
+                {methods.getValues()?.resumeTitle
+                  ? "Your professional resume"
+                  : "No title set"}
+              </p>
+            </div>
+
+            {isEditing && (
+              <div onClick={() => {}} className="lg:pb-6 max-lg:pb-6">
+                <div className="border-0 p-4 m-0 text-center rounded-xl bg-red-200 text-white flex flex-row justify-between gap-x-3 items-center">
+                  <div className="flex flex-row gap-2 items-center">
+                    {/* <FaExclamation className="text-red-900" /> */}
+                    <p className="text-red-900">{"Unsaved Changes"}</p>
+                  </div>
+
+                  <Button
+                    disabled={submitting}
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      const values = methods.getValues();
+                      if (!values.resumeTitle) {
+                        showModal(true);
+                      } else {
+                        await onSubmit(values);
+                      }
+                    }}
+                    variant={""}
+                    className={"bg-red-900 border-0 hover:cursor-pointer"}
+                  >
+                    {submitting ? "Saving..." : "Save"}
+                  </Button>
+                </div>
+              </div>
+            )}
 
             <div>
               <div className="flex flex-row justify-between">
@@ -624,21 +625,6 @@ const ResumeForm = () => {
                 <Button
                   onClick={async (e) => {
                     e.preventDefault();
-                    let allValid = true;
-
-                    for (const key of stepKeys) {
-                      const isValid = await methods.trigger(key);
-                      if (!isValid) {
-                        allValid = false;
-                      }
-                    }
-
-                    if (!allValid) {
-                      toast.error(
-                        "Errors exist in your form, please recheck all the errors"
-                      );
-                      return;
-                    }
                     showModal(true);
                   }}
                   className={

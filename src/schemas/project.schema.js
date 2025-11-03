@@ -1,14 +1,14 @@
 import { z } from "zod";
 
 export const projectSchema = z.object({
-    title: z.string().min(1, "Title is required").default(""),
-    description: z.string().min(1, "Description is required").default(""),
-    extraDetails: z.string().optional().default(""),
+    title: z.string().optional(),
+    description: z.string().optional(),
+    extraDetails: z.string().optional(),
     links: z
         .array(
             z.object({
-                link: z.url("Invalid link"),
+                link: z.string().url("Invalid link").optional(),
             })
         )
-        .default([]),
-})
+        .optional(),
+});

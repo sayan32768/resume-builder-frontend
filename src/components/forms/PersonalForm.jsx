@@ -29,9 +29,7 @@ const PersonalForm = () => {
       <div className="flex flex-col gap-3">
         <div className="flex md:flex-row max-md:flex-col gap-3">
           <div className="flex flex-col gap-3 flex-1">
-            <Label htmlFor="name">
-              Full Name <span className="text-red-900">*</span>
-            </Label>
+            <Label htmlFor="name">Full Name</Label>
 
             <div className="gap-y-1 flex flex-col">
               <Input
@@ -48,9 +46,7 @@ const PersonalForm = () => {
           </div>
 
           <div className="flex flex-col gap-3 flex-1">
-            <Label htmlFor="email">
-              Email <span className="text-red-900">*</span>
-            </Label>
+            <Label htmlFor="email">Email</Label>
 
             <div className="gap-y-1 flex flex-col">
               <Input
@@ -66,9 +62,7 @@ const PersonalForm = () => {
           </div>
         </div>
 
-        <Label htmlFor="phone">
-          Phone Number <span className="text-red-900">*</span>
-        </Label>
+        <Label htmlFor="phone">Phone Number</Label>
 
         <div className="gap-y-1 flex flex-col">
           <Input
@@ -132,8 +126,13 @@ const PersonalForm = () => {
             <div key={obj.id} className="gap-x-1">
               <div className="flex items-center gap-x-3">
                 <Input
-                  placeholder={`Link`}
-                  {...register(`personalDetails.socials.${index}.link`, {})}
+                  placeholder="Link"
+                  {...register(`personalDetails.socials.${index}.link`)}
+                  onKeyDown={(e) => {
+                    if (e.key === " ") {
+                      e.preventDefault();
+                    }
+                  }}
                 />
 
                 <Controller

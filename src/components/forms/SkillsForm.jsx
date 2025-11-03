@@ -31,9 +31,7 @@ export const SkillsForm = () => {
       {fields.map((obj, index) => (
         <div key={obj.id}>
           <div className="flex flex-col gap-y-3">
-            <Label htmlFor={`skill${index}.name`}>
-              Skill {index + 1} <span className="text-red-900">*</span>
-            </Label>
+            <Label htmlFor={`skill${index}.name`}>Skill {index + 1}</Label>
 
             <div className="flex flex-col gap-y-1">
               <div className="flex flex-row gap-4">

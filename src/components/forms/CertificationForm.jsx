@@ -26,9 +26,7 @@ const CertificationForm = () => {
 
           <div className="flex md:flex-col max-md:flex-col gap-3">
             <div className="flex flex-col gap-3 flex-1">
-              <Label htmlFor="issuingAuthority">
-                Issuing Authority <span className="text-red-900">*</span>
-              </Label>
+              <Label htmlFor="issuingAuthority">Issuing Authority</Label>
 
               <div className="gap-y-1 flex flex-col">
                 <Input
@@ -45,9 +43,7 @@ const CertificationForm = () => {
             </div>
 
             <div className="flex flex-col gap-3 flex-1">
-              <Label htmlFor="title">
-                Title <span className="text-red-900">*</span>
-              </Label>
+              <Label htmlFor="title">Title</Label>
 
               <div className="gap-y-1 flex flex-col">
                 <Input
@@ -85,6 +81,11 @@ const CertificationForm = () => {
                 <Input
                   placeholder="Enter a link"
                   {...register(`certifications.${index}.link`, {})}
+                  onKeyDown={(e) => {
+                    if (e.key === " ") {
+                      e.preventDefault();
+                    }
+                  }}
                 />
                 {errors.certifications?.[index]?.link && (
                   <p className="pb-2 text-red-900">
