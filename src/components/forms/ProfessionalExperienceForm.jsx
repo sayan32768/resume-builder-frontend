@@ -25,7 +25,7 @@ const ProfessionalExperienceForm = () => {
         <div key={obj.id} className="flex flex-col gap-3 mb-4 rounded-xl">
           <h1 className="text-xl">Work Details {index + 1}</h1>
 
-          <div className="flex md:flex-row max-md:flex-col gap-3">
+          <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-3 flex-1">
               <Label htmlFor="companyName">Company Name</Label>
 
