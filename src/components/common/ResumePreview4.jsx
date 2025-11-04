@@ -14,6 +14,18 @@ const ResumePreview4 = () => {
   const certifications = data?.certifications || [];
   const skills = data?.skills || [];
 
+  const formatDateRange = (dates) => {
+    if (!dates) return "";
+    const { startDate, endDate } = dates;
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
+    if (start && end && !isNaN(start) && !isNaN(end))
+      return `${start.getFullYear()} - ${end.getFullYear()}`;
+    if (start && !isNaN(start)) return `${start.getFullYear()} - Present`;
+    if (end && !isNaN(end)) return `Ended ${end.getFullYear()}`;
+    return "";
+  };
+
   return (
     <div className="resume-container">
       <style>{`
@@ -117,7 +129,6 @@ const ResumePreview4 = () => {
           color: #1d4ed8;
         }
         .exp-list {
-        //   padding-left: 18px;
           font-size: 13px;
           line-height: 1.5;
         }
@@ -150,54 +161,72 @@ const ResumePreview4 = () => {
             </div>
             {personal.socials?.map((s, i) => (
               <div key={i} className="contact-item">
-                {s.name.toLowerCase() === "linkedin" && <Linkedin size={14} />}
-                {s.name.toLowerCase() === "github" && <Github size={14} />}
-                {s.name.toLowerCase() === "twitter" && <Twitter size={14} />}
+                {s.name?.toLowerCase() === "linkedin" && <Linkedin size={14} />}
+                {s.name?.toLowerCase() === "github" && <Github size={14} />}
+                {s.name?.toLowerCase() === "twitter" && <Twitter size={14} />}
                 <span>
-                  {s.name}: {s.link}
+                  {s.name}:{" "}
+                  {s.link ? (
+                    <a
+                      href={s.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: "#93c5fd" }}
+                    >
+                      {s.link}
+                    </a>
+                  ) : (
+                    "-"
+                  )}
                 </span>
               </div>
             ))}
           </div>
 
-          <h2 className="section-title" style={{ marginTop: "24px" }}>
-            Education
-          </h2>
-          {education.map((edu, i) => (
-            <div key={i} className="edu-entry" style={{ marginBottom: "12px" }}>
-              <p style={{ fontWeight: 600 }}>{edu.degree || "Degree"}</p>
-              <p style={{ color: "#d1d5db" }}>{edu.name || "Institute"}</p>
-              <div style={{ display: "flex", flex: "flex-row", gap: 2 }}>
-                <p style={{ color: "#d1d5db" }}>
-                  {edu.grades?.type ? edu.grades?.type + ": " : "" || ""}
-                </p>
-                <p style={{ color: "#d1d5db" }}>{edu.grades?.score || ""}</p>
-              </div>
+          {education.length > 0 && (
+            <>
+              <h2 className="section-title" style={{ marginTop: "24px" }}>
+                Education
+              </h2>
+              {education.map((edu, i) => (
+                <div
+                  key={i}
+                  className="edu-entry"
+                  style={{ marginBottom: "12px" }}
+                >
+                  <p style={{ fontWeight: 600 }}>
+                    {edu.degree || "Degree"} {edu.name && `• ${edu.name}`}
+                  </p>
+                  {edu.location && (
+                    <p style={{ color: "#d1d5db" }}>{edu.location}</p>
+                  )}
+                  <p style={{ fontSize: "12px", color: "#9ca3af" }}>
+                    {formatDateRange(edu.dates)}
+                  </p>
+                  {edu.grades?.score && edu.grades?.type && (
+                    <p style={{ color: "#d1d5db" }}>
+                      {edu.grades.type === "CGPA"
+                        ? `CGPA: ${edu.grades.score}`
+                        : `Percentage: ${edu.grades.score}%`}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </>
+          )}
 
-              <p style={{ fontSize: "12px", color: "#9ca3af" }}>
-                {edu.dates?.startDate && edu.dates?.endDate
-                  ? `${new Date(
-                      edu.dates.startDate
-                    ).getFullYear()} - ${new Date(
-                      edu.dates.endDate
-                    ).getFullYear()}`
-                  : edu.dates?.startDate
-                  ? new Date(edu.dates.startDate).getFullYear() + "- Present"
-                  : edu.dates?.endDate
-                  ? "End Date-" + new Date(edu.dates.endDate).getFullYear()
-                  : ""}
-              </p>
-            </div>
-          ))}
-
-          <h2 className="section-title" style={{ marginTop: "24px" }}>
-            Skills
-          </h2>
-          <ul className="skill-list">
-            {skills.length > 0
-              ? skills.map((s, i) => <li key={i}>{s.skillName}</li>)
-              : null}
-          </ul>
+          {skills.length > 0 && (
+            <>
+              <h2 className="section-title" style={{ marginTop: "24px" }}>
+                Skills
+              </h2>
+              <ul className="skill-list">
+                {skills.map((s, i) => (
+                  <li key={i}>{s.skillName}</li>
+                ))}
+              </ul>
+            </>
+          )}
 
           {certifications.length > 0 && (
             <>
@@ -210,72 +239,72 @@ const ResumePreview4 = () => {
                   className="cert-entry"
                   style={{ marginBottom: "12px" }}
                 >
+                  {cert.issueDate && (
+                    <p style={{ fontStyle: "italic", color: "#9ca3af" }}>
+                      ({new Date(cert.issueDate).getFullYear()})
+                    </p>
+                  )}
                   <p style={{ fontWeight: 600 }}>
                     {cert.title || "Certificate Title"}
                   </p>
                   <p style={{ color: "#d1d5db" }}>
                     {cert.issuingAuthority || "Authority"}
                   </p>
+                  {cert.link && (
+                    <a
+                      href={cert.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: "#93c5fd", fontSize: "12px" }}
+                    >
+                      {cert.link}
+                    </a>
+                  )}
                 </div>
               ))}
             </>
           )}
 
-          <h2 className="section-title" style={{ marginTop: "24px" }}>
-            Languages
-          </h2>
-          <p className="language">
-            {personal.languages?.join(", ") || "English"}
-          </p>
+          {personal.languages && (
+            <>
+              <h2 className="section-title" style={{ marginTop: "24px" }}>
+                Languages
+              </h2>
+              <p className="language">
+                {personal.languages?.length > 0
+                  ? personal.languages.join(", ")
+                  : "English"}
+              </p>
+            </>
+          )}
         </div>
       </div>
 
       <div className="right-section">
         <div>
           <h1 className="header-name">{personal.fullName || "Your Name"}</h1>
-          <h3 className="header-title">{personal.title || "Your Role"}</h3>
         </div>
 
         {personal.about && (
           <section className="section-block">
-            <h2 className="section-heading">About Me</h2>
+            {/* <h2 className="section-heading">About Me</h2> */}
             <p className="about-text">{personal.about}</p>
           </section>
         )}
 
         {experience.length > 0 && (
           <section className="section-block">
-            <h2 className="section-heading">Work Experience</h2>
+            <h2 className="section-heading">Professional Experience</h2>
             {experience.map((exp, i) => (
               <div key={i} style={{ marginBottom: "12px" }}>
-                <p className="exp-date">
-                  {exp.dates?.startDate && exp.dates?.endDate
-                    ? `${new Date(
-                        exp.dates.startDate
-                      ).getFullYear()} - ${new Date(
-                        exp.dates.endDate
-                      ).getFullYear()}`
-                    : exp.dates?.startDate
-                    ? new Date(exp.dates.startDate).getFullYear() + "- Present"
-                    : exp.dates?.endDate
-                    ? "End Date-" + new Date(exp.dates.endDate).getFullYear()
-                    : ""}
-                </p>
+                <p className="exp-date">{formatDateRange(exp.dates)}</p>
                 <p className="exp-company">
                   {exp.companyName || "Company Name"}
                 </p>
-
-                <p className="">{exp.companyAddress || ""}</p>
+                {exp.companyAddress && <p>{exp.companyAddress}</p>}
                 <p className="exp-position">{exp.position || "Position"}</p>
                 {exp.workDescription && (
-                  <p className="exp-list">
-                    {exp.workDescription
-                      .split(".")
-                      .map(
-                        (task, idx) =>
-                          task.trim() && <span key={idx}>{task.trim()}.</span>
-                      )}
-                  </p>
+                  <p className="exp-list">{exp.workDescription}</p>
                 )}
               </div>
             ))}
@@ -287,9 +316,14 @@ const ResumePreview4 = () => {
             <h2 className="section-heading">Projects</h2>
             {projects.map((proj, i) => (
               <div key={i} style={{ marginBottom: "12px" }}>
-                <p className="proj-title">{proj.title || "Project Title"}</p>
+                <p className="proj-title">
+                  {proj.title || proj.name || "Project Title"}
+                </p>
                 {proj.description && (
                   <p className="proj-desc">{proj.description}</p>
+                )}
+                {proj.extraDetails && (
+                  <p className="proj-desc">{proj.extraDetails}</p>
                 )}
                 {proj.links?.length > 0 && (
                   <ul className="proj-links">
@@ -316,9 +350,11 @@ const ResumePreview4 = () => {
             <h2 className="section-heading">Other Experience</h2>
             {otherExp.map((exp, i) => (
               <div key={i} style={{ marginBottom: "12px" }}>
+                <p className="exp-date">{formatDateRange(exp.dates)}</p>
                 <p className="proj-title">{exp.position || "Position"}</p>
                 <p className="about-text">
-                  {exp.companyName || "Company Name"}
+                  {exp.companyName || "Company Name"}{" "}
+                  {exp.companyAddress && `– ${exp.companyAddress}`}
                 </p>
                 {exp.workDescription && (
                   <p className="other-desc">{exp.workDescription}</p>
