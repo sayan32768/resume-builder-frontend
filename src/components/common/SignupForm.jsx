@@ -61,8 +61,8 @@ export function SignupForm({ className, ...props }) {
         headers: { "Content-Type": "application/json" },
       });
       if (res.data.success) {
-        toast.success(res.data.message);
-        navigate("/verify");
+        toast.success("Please login using your credentials");
+        navigate("/login");
       }
     } catch (error) {
       toast.error(
