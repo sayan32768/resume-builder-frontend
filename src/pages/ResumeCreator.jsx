@@ -39,7 +39,8 @@ function ResumeCreator() {
 
       console.log(data);
 
-      navigate(`/edit/${data.data._id}`, { replace: true });
+      // navigate(`/edit/${data.data._id}`, { replace: true });
+      navigate(`/generate/${data.data._id}`, { replace: true });
     };
 
     createDraft();

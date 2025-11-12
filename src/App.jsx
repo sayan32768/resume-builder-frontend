@@ -10,6 +10,7 @@ import ProtectedRoute from "./components/common/ProtectedRoute";
 import VerifyEmail from "./pages/VerifyEmail";
 import Verify from "./pages/Verify";
 import ResumeCreator from "./pages/ResumeCreator";
+import ResumeGenerator from "./pages/ResumeGenerator";
 
 function App() {
   return (
@@ -55,6 +56,15 @@ function App() {
           element={
             <ProtectedRoute>
               <ResumeCreator />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/generate/:id"
+          element={
+            <ProtectedRoute>
+              <ResumeGenerator />
             </ProtectedRoute>
           }
         />
